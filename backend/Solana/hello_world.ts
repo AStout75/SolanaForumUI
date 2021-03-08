@@ -15,15 +15,16 @@ import {
   Transaction,
   sendAndConfirmTransaction,
 } from '@solana/web3.js';
+
 import fs, { read } from 'mz/fs';
 
 // @ts-ignore
 import BufferLayout from 'buffer-layout';
 const lo = BufferLayout;
 
-import {url, urlTls} from './util/url';
-import {Store} from './util/store';
-import {newAccountWithLamports} from './util/new-account-with-lamports';
+import {url, urlTls} from '../util/url';
+import {Store} from '../util/store';
+import {newAccountWithLamports} from '../util/new-account-with-lamports';
 
 /**
  * Connection to the network

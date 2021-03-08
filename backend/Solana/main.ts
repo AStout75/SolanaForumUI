@@ -15,10 +15,10 @@ import {
 
 async function main() {
   console.log("--------------------Solana forum demo--------------------");
-  const readlineSync = require('readline-sync');
+  /*const readlineSync = require('readline-sync');
   let options = ["View posts", "New post"];
   let response = readlineSync.keyInSelect(options, "Choose one (New post assumes you have a valid store)")
-  
+  */
   // Establish connection to the cluster
   await establishConnection();
 
@@ -27,6 +27,11 @@ async function main() {
 
   // Load the program if not already loaded
   await loadProgram();
+
+  // Get accounts owned by the program
+  await reportAccounts();
+
+  /*
 
   switch(response) {
     case 0:
@@ -48,7 +53,7 @@ async function main() {
       break;
     default:
       break;
-  }
+  } */
   console.log('Success');
 }
 

@@ -3,6 +3,7 @@
 
 import {clusterApiUrl, Cluster} from '@solana/web3.js';
 import dotenv from 'dotenv';
+import { pathToFileURL } from 'url';
 
 function chooseCluster(): Cluster | undefined {
   dotenv.config();
