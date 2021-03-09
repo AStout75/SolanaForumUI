@@ -4,9 +4,8 @@
 exports.__esModule = true;
 exports.walletUrl = exports.urlTls = exports.url = exports.cluster = void 0;
 var web3_js_1 = require("@solana/web3.js");
-var dotenv_1 = require("dotenv");
+require("dotenv").config();
 function chooseCluster() {
-    dotenv_1["default"].config();
     if (!process.env.LIVE)
         return;
     switch (process.env.CLUSTER) {

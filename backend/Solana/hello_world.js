@@ -45,7 +45,7 @@ var web3_js_1 = require("@solana/web3.js");
 var fs_1 = require("mz/fs");
 // @ts-ignore
 var buffer_layout_1 = require("buffer-layout");
-var lo = buffer_layout_1["default"];
+var lo = buffer_layout_1;
 var url_1 = require("../util/url");
 var store_1 = require("../util/store");
 var new_account_with_lamports_1 = require("../util/new-account-with-lamports");
@@ -69,24 +69,24 @@ var pathToProgram = 'dist/program/helloworld.so';
 /**
  * Layout of a single post
  */
-var postLayout = buffer_layout_1["default"].struct([
+var postLayout = buffer_layout_1.struct([
     //BufferLayout.u32('numGreets'),
-    buffer_layout_1["default"].u8('type'),
-    buffer_layout_1["default"].cstr('body'),
+    buffer_layout_1.u8('type'),
+    buffer_layout_1.cstr('body'),
 ]);
 /**
  * Layout of account data
  */
-var accountLayout = buffer_layout_1["default"].struct([
-    buffer_layout_1["default"].u16('numPosts'),
-    buffer_layout_1["default"].seq(postLayout, buffer_layout_1["default"].offset(buffer_layout_1["default"].u16(), -1), 'posts'),
+var accountLayout = buffer_layout_1.struct([
+    buffer_layout_1.u16('numPosts'),
+    buffer_layout_1.seq(postLayout, buffer_layout_1.offset(buffer_layout_1.u16(), -1), 'posts'),
 ]);
 /**
  * Layout of the greeted account data
  */
-var greetedAccountDataLayout = buffer_layout_1["default"].struct([
+var greetedAccountDataLayout = buffer_layout_1.struct([
     //BufferLayout.seq(BufferLayout.u8(), 1024, 'account_data'),
-    buffer_layout_1["default"].seq(buffer_layout_1["default"].u8(), 1024, 'account_data'),
+    buffer_layout_1.seq(buffer_layout_1.u8(), 1024, 'account_data'),
 ]);
 function printAccountPosts(d) {
     var postCount = d.readUInt16LE(0);
