@@ -46,9 +46,9 @@ var fs_1 = require("mz/fs");
 // @ts-ignore
 var buffer_layout_1 = require("buffer-layout");
 var lo = buffer_layout_1;
-var url_1 = require("../util/url");
-var store_1 = require("../util/store");
-var new_account_with_lamports_1 = require("../util/new-account-with-lamports");
+var url_1 = require("./util/url");
+var store_1 = require("./util/store");
+var new_account_with_lamports_1 = require("./util/new-account-with-lamports");
 /**
  * Connection to the network
  */
@@ -65,7 +65,7 @@ var programId;
  * The public key of the account we are saying hello to
  */
 var greetedPubkey;
-var pathToProgram = 'dist/program/helloworld.so';
+var pathToProgram = './dist/helloworld.so';
 /**
  * Layout of a single post
  */
@@ -151,7 +151,8 @@ function establishPayer() {
                     return [4 /*yield*/, connection.getRecentBlockhash()];
                 case 1:
                     feeCalculator = (_d.sent()).feeCalculator;
-                    return [4 /*yield*/, fs_1["default"].readFile(pathToProgram)];
+                    const fs = require('fs');
+                    return [4 /*yield*/, fs.readFileSync(pathToProgram)];
                 case 2:
                     data = _d.sent();
                     NUM_RETRIES = 500;
@@ -214,7 +215,8 @@ function loadProgram() {
                 case 5:
                     // Load the program
                     console.log('Loading hello world program...');
-                    return [4 /*yield*/, fs_1["default"].readFile(pathToProgram)];
+                    const fs = require('fs');
+                    return [4 /*yield*/, fs.readFileSync(pathToProgram)];
                 case 6:
                     data = _a.sent();
                     programAccount = new web3_js_1.Account();

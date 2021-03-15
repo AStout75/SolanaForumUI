@@ -47,7 +47,7 @@ var Store = /** @class */ (function () {
     function Store() {
     }
     Store.getDir = function () {
-        return path_1["default"].join(__dirname, 'store');
+        return path_1.join(__dirname, 'store');
     };
     Store.prototype.load = function (uri) {
         return __awaiter(this, void 0, void 0, function () {
@@ -69,11 +69,11 @@ var Store = /** @class */ (function () {
             var filename;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, mkdirp_1["default"](Store.getDir())];
+                    case 0: return [4 /*yield*/, mkdirp_1(Store.getDir())];
                     case 1:
                         _a.sent();
-                        filename = path_1["default"].join(Store.getDir(), uri);
-                        return [4 /*yield*/, fs_1["default"].writeFile(filename, JSON.stringify(config), 'utf8')];
+                        filename = path_1.join(Store.getDir(), uri);
+                        return [4 /*yield*/, fs_1.writeFile(filename, JSON.stringify(config), 'utf8')];
                     case 2:
                         _a.sent();
                         return [2 /*return*/];
