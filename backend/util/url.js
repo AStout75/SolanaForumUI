@@ -24,7 +24,7 @@ function chooseCluster() {
 }
 exports.cluster = chooseCluster();
 exports.url = process.env.RPC_URL ||
-    (process.env.LIVE ? web3_js_1.clusterApiUrl(exports.cluster, false) : 'http://localhost:8899');
+    (process.env.LIVE ? web3_js_1.clusterApiUrl(exports.cluster, false) : 'https://devnet.solana.com');
 exports.urlTls = process.env.RPC_URL ||
-    (process.env.LIVE ? web3_js_1.clusterApiUrl(exports.cluster, true) : 'http://localhost:8899');
+    (process.env.LIVE ? web3_js_1.clusterApiUrl(exports.cluster, true) : 'https://devnet.solana.com');
 exports.walletUrl = process.env.WALLET_URL || 'https://solana-example-webwallet.herokuapp.com/';

@@ -10,6 +10,9 @@
 //     reportHellos,
 //     reportAccounts,
 //   } from './Solana/hello_world.js'; 
+const server = require('./server-setup');
+
+server.setUpServer();
 
   var hw1 = require("./hello_world");
   
@@ -69,7 +72,3 @@
       process.exit(-1);
     },
   ); 
-
-const server = require('./server-setup');
-
-server.setUpServer();
