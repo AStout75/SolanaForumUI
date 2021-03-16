@@ -1,5 +1,6 @@
 //Server imports
 const express = require('express');
+const socketIO = require('socket.io');
 const path = require('path');
 
 const PORT = process.env.PORT || 3000;
@@ -16,6 +17,8 @@ function setUpServer() {
     app.use(express.static(path.join(process.cwd(), 'dist')));
     
     let server = app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+    const io = socketIO(server);
+    return io;
 }
 
 exports.setUpServer = setUpServer;

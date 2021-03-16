@@ -1,4 +1,8 @@
 "use strict";
+
+/* Web server */
+const server = require("./server-setup");
+const events = require("./socket-events");
 /**
  * Hello world
  */
@@ -40,7 +44,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var hello_world_1 = require("./hello_world");
-function main() {
+async function main() {
+    var io;
+    io = server.setUpServer();
+    events.setUpSocketEvents(io);
+    
     return __awaiter(this, void 0, void 0, function () {
         var readlineSync, options, response, _a, postBody;
         return __generator(this, function (_b) {
@@ -113,7 +121,11 @@ function main() {
         });
     });
 }
-main().then(function () { return process.exit(); }, function (err) {
+
+
+
+main().then(function () { /*return process.exit();*/ }, function (err) {
     console.error(err);
     process.exit(-1);
 });
+

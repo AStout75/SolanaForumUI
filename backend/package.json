@@ -52,7 +52,8 @@
     "json-to-pretty-yaml": "^1.2.2",
     "mkdirp": "^1.0.4",
     "mz": "^2.7.0",
-    "readline-sync": "^1.4.10"
+    "readline-sync": "^1.4.10",
+    "socket.io": "^2.4.1"
   },
   "engines": {
     "node": "12.x"
