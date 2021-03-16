@@ -134,7 +134,7 @@
    * Establish a connection to the cluster
    */
  async function establishConnection() {
-    connection = new web3.Connection(url1.url, 'singleGossip');
+    connection = new web3.Connection('http://localhost:8899', 'singleGossip');
     const version = await connection.getVersion();
     console.log('Connection to cluster established:', url1.url, version);
   }
@@ -207,10 +207,10 @@
       console.log('Program loaded to account', programId.toBase58());
     }
   
-    //if(config.secretKey) {
-    //  console.log("Using existing account with secret key", config.secretKey);
-    //  greetedAccount = new Account(Buffer.from(config.secretKey));
-    //} else {
+    if(config && config.secretKey) {
+      console.log("Using existing account with secret key", config.secretKey);
+      greetedAccount = new web3.Account(Buffer.from(config.secretKey, 'base64'));
+    } else {
       console.log("Creating new account");
       greetedAccount = new web3.Account();
       // Create the greeted account
@@ -237,14 +237,14 @@
           preflightCommitment: 'singleGossip',
         },
       );
-    //}
-  
+    }
+    let t = Buffer.from(greetedAccount.secretKey);
     // Save this info for next time
     await store.save('config.json', {
       url: url1.urlTls,
       programId: programId.toBase58(),
       publicKey: greetedAccount.publicKey.toBase58(),
-      secretKey: bs58.encode(greetedAccount.secretKey),
+      secretKey: t.toString('base64'),
     });
   }
   
@@ -331,7 +331,7 @@
    */
    async function reportAccounts() {
     const accounts = await connection.getProgramAccounts(programId);
-    console.log("Accounts owned by program:");
+    // console.log("Accounts owned by program:");
     for(let i = 0; i < accounts.length; i++) {
       // console.log(accounts[i].pubkey.toBase58());
       var retStr = accounts[i].pubkey.toBase58();

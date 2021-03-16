@@ -32,6 +32,10 @@
   
     // Load the program if not already loaded
     await hw1.loadProgram();
+
+    accountsString = await hw1.reportAccounts();
+    console.log("Response from Solana validator:");
+    console.log(accountsString);
   
     console.log('Success');
   }
