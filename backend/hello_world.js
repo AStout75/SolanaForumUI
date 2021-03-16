@@ -40,7 +40,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.reportAccounts = exports.reportHellos = exports.sayHello = exports.loadProgram = exports.establishPayer = exports.establishConnection = void 0;
+exports.getArrayOfPosts = exports.reportAccounts = exports.reportHellos = exports.sayHello = exports.loadProgram = exports.establishPayer = exports.establishConnection = exports.arrayOfPosts = void 0;
 var web3_js_1 = require("@solana/web3.js");
 var fs_1 = require("mz/fs");
 // @ts-ignore
@@ -49,6 +49,8 @@ var lo = buffer_layout_1;
 var url_1 = require("./util/url");
 var store_1 = require("./util/store");
 var new_account_with_lamports_1 = require("./util/new-account-with-lamports");
+var base_x_1 = require("base-x");
+var bs58 = base_x_1("base-58");
 /**
  * Connection to the network
  */
@@ -62,10 +64,10 @@ var payerAccount;
  */
 var programId;
 /**
- * The public key of the account we are saying hello to
+ * Greeted account
  */
-var greetedPubkey;
-var pathToProgram = './dist/helloworld.so';
+var greetedAccount;
+var pathToProgram = 'backend/dist/program/helloworld.so';
 /**
  * Layout of a single post
  */
@@ -117,6 +119,40 @@ function printAccountPosts(d) {
     }
     console.log("Account has used", i, "out of", d.length, "available bytes");
 }
+function arrayOfPosts(d, key) {
+    var readType = false;
+    var currentPost = "";
+    var i = 2;
+    var x = 1;
+    var postCount = d.readUInt16LE(0);
+    var ret = new Array("");
+    for (; i < d.length; i++) {
+        // Stop after reading 2 terminators in a row
+        if (d.readUInt8(i) == 0 && d.readUInt8(i - 1) == 0) {
+            return ret;
+        }
+        if (!readType) {
+            // process.stdout.write("Type: " + String.fromCharCode(d.readUInt8(i)));
+            currentPost += "Type: " + String.fromCharCode(d.readUInt8(i)) + " - ";
+            readType = true;
+        }
+        else if (d.readUInt8(i) == 0) {
+            // console.log("\tBody:", currentPost);
+            var toPush = (x + " - " + currentPost + " - Posted By: " + key);
+            x++;
+            ret.push(toPush);
+            currentPost = "";
+            readType = false;
+        }
+        else {
+            currentPost += String.fromCharCode(d.readUInt8(i));
+        }
+    }
+    // console.log("Account has used", i, "out of", d.length, "available bytes");
+    // console.log(ret)
+    return ret;
+}
+exports.arrayOfPosts = arrayOfPosts;
 /**
  * Establish a connection to the cluster
  */
@@ -151,8 +187,7 @@ function establishPayer() {
                     return [4 /*yield*/, connection.getRecentBlockhash()];
                 case 1:
                     feeCalculator = (_d.sent()).feeCalculator;
-                    const fs = require('fs');
-                    return [4 /*yield*/, fs.readFileSync(pathToProgram)];
+                    return [4 /*yield*/, fs_1.readFile(pathToProgram)];
                 case 2:
                     data = _d.sent();
                     NUM_RETRIES = 500;
@@ -191,50 +226,54 @@ exports.establishPayer = establishPayer;
  */
 function loadProgram() {
     return __awaiter(this, void 0, void 0, function () {
-        var store, config, err_1, data, programAccount, greetedAccount, space, lamports, transaction;
+        var store, config, err_1, data, programAccount, space, lamports, transaction;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     store = new store_1.Store();
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 4, , 5]);
+                    _a.trys.push([1, 4, , 7]);
                     return [4 /*yield*/, store.load('config.json')];
                 case 2:
                     config = _a.sent();
                     programId = new web3_js_1.PublicKey(config.programId);
-                    greetedPubkey = new web3_js_1.PublicKey(config.greetedPubkey);
                     return [4 /*yield*/, connection.getAccountInfo(programId)];
                 case 3:
                     _a.sent();
                     console.log('Program already loaded to account', programId.toBase58());
-                    return [2 /*return*/];
+                    return [3 /*break*/, 7];
                 case 4:
                     err_1 = _a.sent();
-                    return [3 /*break*/, 5];
-                case 5:
+                    // try to load the program
                     // Load the program
                     console.log('Loading hello world program...');
-                    const fs = require('fs');
-                    return [4 /*yield*/, fs.readFileSync(pathToProgram)];
-                case 6:
+                    return [4 /*yield*/, fs_1.readFile(pathToProgram)];
+                case 5:
                     data = _a.sent();
                     programAccount = new web3_js_1.Account();
                     return [4 /*yield*/, web3_js_1.BpfLoader.load(connection, payerAccount, programAccount, data, web3_js_1.BPF_LOADER_PROGRAM_ID)];
-                case 7:
+                case 6:
                     _a.sent();
                     programId = programAccount.publicKey;
                     console.log('Program loaded to account', programId.toBase58());
+                    return [3 /*break*/, 7];
+                case 7:
+                    //if(config.secretKey) {
+                    //  console.log("Using existing account with secret key", config.secretKey);
+                    //  greetedAccount = new Account(Buffer.from(config.secretKey));
+                    //} else {
+                    console.log("Creating new account");
                     greetedAccount = new web3_js_1.Account();
-                    greetedPubkey = greetedAccount.publicKey;
-                    console.log('Creating account', greetedPubkey.toBase58(), 'to say hello to');
+                    // Create the greeted account
+                    console.log('Creating account', greetedAccount.publicKey.toBase58(), 'to say hello to');
                     space = greetedAccountDataLayout.span;
                     return [4 /*yield*/, connection.getMinimumBalanceForRentExemption(greetedAccountDataLayout.span)];
                 case 8:
                     lamports = _a.sent();
                     transaction = new web3_js_1.Transaction().add(web3_js_1.SystemProgram.createAccount({
                         fromPubkey: payerAccount.publicKey,
-                        newAccountPubkey: greetedPubkey,
+                        newAccountPubkey: greetedAccount.publicKey,
                         lamports: lamports,
                         space: space,
                         programId: programId
@@ -245,13 +284,16 @@ function loadProgram() {
                         })];
                 case 9:
                     _a.sent();
+                    //}
                     // Save this info for next time
                     return [4 /*yield*/, store.save('config.json', {
                             url: url_1.urlTls,
                             programId: programId.toBase58(),
-                            greetedPubkey: greetedPubkey.toBase58()
+                            publicKey: greetedAccount.publicKey.toBase58(),
+                            secretKey: bs58.encode(greetedAccount.secretKey)
                         })];
                 case 10:
+                    //}
                     // Save this info for next time
                     _a.sent();
                     return [2 /*return*/];
@@ -263,21 +305,27 @@ exports.loadProgram = loadProgram;
 /**
  * Say hello
  */
-function sayHello(body) {
+function sayHello(body, type) {
     return __awaiter(this, void 0, void 0, function () {
         var post, instruction;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log('Saying hello to', greetedPubkey.toBase58());
-                    post = Buffer.from('P' + body + '\0');
+                    console.log('Saying hello to', greetedAccount.publicKey.toBase58());
+                    post = Buffer.from("");
+                    if (type == "post") {
+                        post = Buffer.from('P' + body + '\0');
+                    }
+                    else if (type == "like") {
+                        post = Buffer.from('L' + body + '\0');
+                    }
                     console.log("Length of post:", post.length);
                     instruction = new web3_js_1.TransactionInstruction({
-                        keys: [{ pubkey: greetedPubkey, isSigner: false, isWritable: true }],
+                        keys: [{ pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true }],
                         programId: programId,
                         data: post
                     });
-                    return [4 /*yield*/, web3_js_1.sendAndConfirmTransaction(connection, new web3_js_1.Transaction().add(instruction), [payerAccount], {
+                    return [4 /*yield*/, web3_js_1.sendAndConfirmTransaction(connection, new web3_js_1.Transaction().add(instruction), [payerAccount, greetedAccount], {
                             commitment: 'singleGossip',
                             preflightCommitment: 'singleGossip'
                         })];
@@ -297,7 +345,7 @@ function reportHellos() {
         var accountInfo;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, connection.getAccountInfo(greetedPubkey)];
+                case 0: return [4 /*yield*/, connection.getAccountInfo(greetedAccount.publicKey)];
                 case 1:
                     accountInfo = _a.sent();
                     if (accountInfo === null) {
@@ -317,7 +365,7 @@ function printAccountData(account) {
         var accountInfo;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, connection.getAccountInfo(greetedPubkey)];
+                case 0: return [4 /*yield*/, connection.getAccountInfo(greetedAccount.publicKey)];
                 case 1:
                     accountInfo = _a.sent();
                     if (accountInfo === null) {
@@ -336,7 +384,7 @@ function printAccountData(account) {
  */
 function reportAccounts() {
     return __awaiter(this, void 0, void 0, function () {
-        var accounts, i;
+        var accounts, i, posts;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, connection.getProgramAccounts(programId)];
@@ -348,9 +396,10 @@ function reportAccounts() {
                 case 2:
                     if (!(i < accounts.length)) return [3 /*break*/, 5];
                     console.log(accounts[i].pubkey.toBase58());
-                    return [4 /*yield*/, printAccountData(accounts[i].pubkey)];
+                    return [4 /*yield*/, getArrayOfPosts(accounts[i].pubkey)];
                 case 3:
-                    _a.sent();
+                    posts = _a.sent();
+                    console.log(posts);
                     _a.label = 4;
                 case 4:
                     i++;
@@ -361,3 +410,27 @@ function reportAccounts() {
     });
 }
 exports.reportAccounts = reportAccounts;
+function getArrayOfPosts(pk) {
+    return __awaiter(this, void 0, void 0, function () {
+        var accountInfo, x;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, connection.getAccountInfo(pk)];
+                case 1:
+                    accountInfo = _a.sent();
+                    if (accountInfo === null) {
+                        throw 'Error: cannot get data for account ';
+                    }
+                    if (arrayOfPosts(accountInfo.data, pk) != null) {
+                        return [2 /*return*/, arrayOfPosts(accountInfo.data, pk)];
+                    }
+                    else {
+                        x = [""];
+                        return [2 /*return*/, x];
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getArrayOfPosts = getArrayOfPosts;
