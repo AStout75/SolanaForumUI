@@ -1,13 +1,13 @@
 var io;
 
-function setUpSocketEvents(serverIO) {
+function setUpSocketEvents(serverIO, response) {
     io = serverIO;
-    io.on('connect', socket => {
+    io.on('connection', socket => {
         console.log('user connected\n\n\n\n');
         
         socket.on('posts', () => {
             console.log('posts requested');
-            socket.emit('posts-got', "HEY HEY HEYYYYYYY");
+            socket.emit('posts-got', response);
         });
     })
 }

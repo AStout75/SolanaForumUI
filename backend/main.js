@@ -22,8 +22,8 @@
 
     var io;
     io = server.setUpServer();
-    events.setUpSocketEvents(io);
     
+  
     // Establish connection to the cluster
     await hw1.establishConnection();
   
@@ -33,10 +33,11 @@
     // Load the program if not already loaded
     await hw1.loadProgram();
 
-    accountsString = await hw1.reportAccounts();
+    let accountsString = await hw1.reportAccounts();
     console.log("Response from Solana validator:");
     console.log(accountsString);
-  
+    events.setUpSocketEvents(io, accountsString);
+
     console.log('Success');
   }
   

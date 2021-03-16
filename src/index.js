@@ -27,7 +27,7 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-socket.emit('connect');
+socket.emit('connection');
 //socket.emit('posts');
 socket.on('posts-got', text => {
     document.getElementById("posts").innerHTML = text;
