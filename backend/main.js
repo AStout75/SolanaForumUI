@@ -42,7 +42,9 @@
       case 0:
         // Get accounts owned by the program
         // await reportAccounts();
+        console.log("case 0");
         await hw1.reportAccounts();
+        console.log("HELLO?");
         /*
         let view = await getArrayOfPosts();
         for (var val of view) {

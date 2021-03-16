@@ -323,6 +323,7 @@
    * Report the accounts owned by the program
    */
    async function reportAccounts() {
+     console.log("AHHHH");
     const accounts = await connection.getProgramAccounts(programId);
     console.log("Accounts owned by program:");
     for(let i = 0; i < accounts.length; i++) {
