@@ -102,7 +102,7 @@
     let i = 2;
     let x = 1;
     const postCount = d.readUInt16LE(0);
-    var ret = new Array("")
+    var ret = [];
     for(; i < d.length; i++) {
       // Stop after reading 2 terminators in a row
       if(d.readUInt8(i) == 0 && d.readUInt8(i - 1) == 0) {
@@ -115,7 +115,7 @@
       }
       else if(d.readUInt8(i) == 0) {
         // console.log("\tBody:", currentPost);
-        let toPush = (x + " - " + currentPost + " - Posted By: " + key);
+        let toPush = (x + " - " + currentPost);
         x++;
         ret.push(toPush)
         currentPost = "";
@@ -252,7 +252,7 @@
    * Say hello
    */
    async function sayHello(body, type) {
-    console.log('Saying hello to', greetedAccount.publicKey.toBase58());
+    console.log('Posting on account', greetedAccount.publicKey.toBase58());
   
     /*
     rl.on("close", function() {
@@ -332,16 +332,31 @@
    async function reportAccounts() {
     const accounts = await connection.getProgramAccounts(programId);
     // console.log("Accounts owned by program:");
+    let retStr = [];
     for(let i = 0; i < accounts.length; i++) {
       // console.log(accounts[i].pubkey.toBase58());
-      var retStr = accounts[i].pubkey.toBase58();
+      retStr.push(accounts[i].pubkey.toBase58());
       let posts = await getArrayOfPosts(accounts[i].pubkey);
       // console.log(posts);
+      for(let j = 0; j < posts.length; j++) {
+        retStr.push(posts[j]);
+      }
+      /*
+      if(posts.length == 0) {
+        retStr += "\n";
+        continue;
+      }
       retStr += "\n\t";
-      for (x in posts) {
-        retStr += x;
+      let j = 0;
+      for (; j < posts.length; j++) {
+        retStr += posts[j];
+        if(j == posts.length - 1) {
+          retStr += "\n";
+          continue;
+        }
         retStr += "\n\t"
       }
+      */
     }
     return retStr;
   }

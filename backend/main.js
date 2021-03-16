@@ -16,8 +16,12 @@
   /* Web server */
   const server = require("./server-setup");
   const events = require("./socket-events");
+const { sleep } = require('./util/sleep');
   
-  
+  function getAllPosts() {
+    return hw1.reportAccounts();
+  }
+
   async function main() {
 
     var io;
@@ -36,12 +40,30 @@
     let accountsString = await hw1.reportAccounts();
     console.log("Response from Solana validator:");
     console.log(accountsString);
-    events.setUpSocketEvents(io, accountsString);
+    io.on('connection', socket => {
+      console.log('user connected');
+      
+      socket.on('posts', () => {
+          console.log('posts requested');
+          socket.emit('posts-got', accountsString);
+      });
+
+      socket.on('new-post', body => {
+          console.log("new post:", body);
+          hw1.sayHello(body, "post");
+      });
+  })
 
     console.log('Success');
+    while(true) {
+      // TODO this is kind of messy but idk how to do it
+      // aside from polling like this
+      await sleep(500);
+      accountsString = await getAllPosts();
+    }
   }
   
-  main().then(function () { /*return process.exit();*/ }, function (err) {
+  main().then(function () { /* do nothing */ }, function (err) {
     console.error(err);
     process.exit(-1);
 });
