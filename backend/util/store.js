@@ -55,8 +55,8 @@ var Store = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        filename = path_1["default"].join(Store.getDir(), uri);
-                        return [4 /*yield*/, fs_1["default"].readFile(filename, 'utf8')];
+                        filename = path_1.join(Store.getDir(), uri);
+                        return [4 /*yield*/, fs_1.readFile(filename, 'utf8')];
                     case 1:
                         data = _a.sent();
                         return [2 /*return*/, JSON.parse(data)];

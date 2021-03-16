@@ -187,7 +187,7 @@
     var config;
     try {
       config = await store.load('config.json');
-      programId = new PublicKey(config.programId);
+      programId = new web3.PublicKey(config.programId);
       await connection.getAccountInfo(programId);
       console.log('Program already loaded to account', programId.toBase58());
     } catch (err) {
