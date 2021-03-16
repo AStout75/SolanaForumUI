@@ -321,15 +321,29 @@
   
   /**
    * Report the accounts owned by the program
+   * 
+   * Format: 
+   * PUBKEY
+   *       POST1
+   *       POST2
+   *       POST3
+   * PUBKEY
    */
    async function reportAccounts() {
     const accounts = await connection.getProgramAccounts(programId);
     console.log("Accounts owned by program:");
     for(let i = 0; i < accounts.length; i++) {
-      console.log(accounts[i].pubkey.toBase58());
+      // console.log(accounts[i].pubkey.toBase58());
+      var retStr = accounts[i].pubkey.toBase58();
       let posts = await getArrayOfPosts(accounts[i].pubkey);
-      console.log(posts);
+      // console.log(posts);
+      retStr += "\n\t";
+      for (x in posts) {
+        retStr += x;
+        retStr += "\n\t"
+      }
     }
+    return retStr;
   }
   
    async function getArrayOfPosts(pk) {
