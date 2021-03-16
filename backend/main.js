@@ -20,9 +20,9 @@
   
   async function main() {
 
-    var io;
-    io = server.setUpServer();
-    events.setUpSocketEvents(io);
+    // var io;
+    // io = server.setUpServer();
+    // events.setUpSocketEvents(io);
 
     console.log("--------------------Solana forum demo--------------------");
     const readlineSync = require('readline-sync');

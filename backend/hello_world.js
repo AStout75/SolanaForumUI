@@ -269,14 +269,14 @@
       post = Buffer.from('L' + body + '\0');
     }
     console.log("Length of post:", post.length);
-    const instruction = new TransactionInstruction({
+    const instruction = new web3.TransactionInstruction({
       keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
       programId,
       data: post,//Buffer.alloc(0), // All instructions are hellos
     });
-    await sendAndConfirmTransaction(
+    await web3.sendAndConfirmTransaction(
       connection,
-      new Transaction().add(instruction),
+      new web3.Transaction().add(instruction),
       [payerAccount, greetedAccount],
       {
         commitment: 'singleGossip',
@@ -351,3 +351,5 @@
   exports.establishPayer = establishPayer;
   exports.loadProgram = loadProgram;
   exports.reportAccounts = reportAccounts;
+  exports.sayHello = sayHello;
+  exports.reportHellos = reportHellos;
