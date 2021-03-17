@@ -23,7 +23,6 @@ const { sleep } = require('./util/sleep');
   }
 
   async function main() {
-
     var io;
     io = server.setUpServer();
     
@@ -38,14 +37,15 @@ const { sleep } = require('./util/sleep');
     await hw1.loadProgram();
 
     let accountsString = await hw1.reportAccounts();
+    console.log(accountsString);
     console.log("Response from Solana validator:");
     console.log(accountsString);
     io.on('connection', socket => {
       console.log('user connected');
       
-      socket.on('posts', () => {
+      socket.on('request-posts', () => {
           console.log('posts requested');
-          socket.emit('posts-got', accountsString);
+          socket.emit('send-posts', accountsString);
       });
 
       socket.on('new-post', body => {

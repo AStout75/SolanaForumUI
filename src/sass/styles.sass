@@ -1,0 +1,38 @@
+$primary-color: darkorchid
+$secondary-color: white
+
+$nav-font-size: 30px
+
+@mixin icon
+    width: $nav-font-size * 1.25
+    height: $nav-font-size * 1.25
+    background-color: $secondary-color
+    i
+        color: $primary-color
+        font-size: $nav-font-size * 0.85
+
+
+
+nav
+    background-color: $primary-color
+    padding: 10px 0 10px 15px
+    span
+        display: inline-block
+        color: $secondary-color
+        font-size: $nav-font-size
+
+.help-button
+    @include icon
+    margin: 0px 10px
+
+
+    
+
+/*.help-button
+    display: inline-block*/
+
+/*.help-button::after
+    margin-left: 10px
+    font-family: "Font Awesome 5 Free"
+    font-weight: 900
+    content: "\f3b0"*/

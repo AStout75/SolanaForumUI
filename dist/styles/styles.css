@@ -1,7 +1,30 @@
-body {
-    margin: 25px;
+nav {
+  background-color: darkorchid;
+  padding: 10px 0 10px 15px;
+}
+nav span {
+  display: inline-block;
+  color: white;
+  font-size: 30px;
 }
 
-h1 {
-    color: green;
+.help-button {
+  width: 37.5px;
+  height: 37.5px;
+  background-color: white;
+  margin: 0px 10px;
 }
+.help-button i {
+  color: darkorchid;
+  font-size: 25.5px;
+}
+
+/*.help-button
+ *  display: inline-block*/
+/*.help-button::after
+ *  margin-left: 10px
+ *  font-family: "Font Awesome 5 Free"
+ *  font-weight: 900
+ *  content: "\f3b0"*/
+
+/*# sourceMappingURL=styles.css.map */

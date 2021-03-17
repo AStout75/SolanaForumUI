@@ -330,7 +330,6 @@
    * PUBKEY
    */
    async function reportAccounts() {
-     console.log("AHHHH");
     const accounts = await connection.getProgramAccounts(programId);
     // console.log("Accounts owned by program:");
     let retStr = [];
