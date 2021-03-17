@@ -1,13 +1,18 @@
 var io;
 
-function setUpSocketEvents(serverIO) {
+// This is currently unused
+function setUpSocketEvents(serverIO, response) {
     io = serverIO;
-    io.on('connect', socket => {
-        console.log('user connected\n\n\n\n');
+    io.on('connection', socket => {
+        console.log('user connected');
         
         socket.on('posts', () => {
             console.log('posts requested');
-            socket.emit('posts-got', "HEY HEY HEYYYYYYY");
+            socket.emit('posts-got', response);
+        });
+
+        socket.on('new-post', body => {
+            console.log("new post:", body);
         });
     })
 }

@@ -102,7 +102,7 @@
     let i = 2;
     let x = 1;
     const postCount = d.readUInt16LE(0);
-    var ret = new Array("")
+    var ret = [];
     for(; i < d.length; i++) {
       // Stop after reading 2 terminators in a row
       if(d.readUInt8(i) == 0 && d.readUInt8(i - 1) == 0) {
@@ -115,7 +115,7 @@
       }
       else if(d.readUInt8(i) == 0) {
         // console.log("\tBody:", currentPost);
-        let toPush = (x + " - " + currentPost + " - Posted By: " + key);
+        let toPush = (x + " - " + currentPost);
         x++;
         ret.push(toPush)
         currentPost = "";
@@ -134,7 +134,7 @@
    * Establish a connection to the cluster
    */
  async function establishConnection() {
-    connection = new web3.Connection(url1.url, 'singleGossip');
+    connection = new web3.Connection('http://localhost:8899', 'singleGossip');
     const version = await connection.getVersion();
     console.log('Connection to cluster established:', url1.url, version);
   }
@@ -187,7 +187,7 @@
     var config;
     try {
       config = await store.load('config.json');
-      programId = new PublicKey(config.programId);
+      programId = new web3.PublicKey(config.programId);
       await connection.getAccountInfo(programId);
       console.log('Program already loaded to account', programId.toBase58());
     } catch (err) {
@@ -207,10 +207,10 @@
       console.log('Program loaded to account', programId.toBase58());
     }
   
-    //if(config.secretKey) {
-    //  console.log("Using existing account with secret key", config.secretKey);
-    //  greetedAccount = new Account(Buffer.from(config.secretKey));
-    //} else {
+    if(config && config.secretKey) {
+      console.log("Using existing account with secret key", config.secretKey);
+      greetedAccount = new web3.Account(Buffer.from(config.secretKey, 'base64'));
+    } else {
       console.log("Creating new account");
       greetedAccount = new web3.Account();
       // Create the greeted account
@@ -237,14 +237,14 @@
           preflightCommitment: 'singleGossip',
         },
       );
-    //}
-  
+    }
+    let t = Buffer.from(greetedAccount.secretKey);
     // Save this info for next time
     await store.save('config.json', {
       url: url1.urlTls,
       programId: programId.toBase58(),
       publicKey: greetedAccount.publicKey.toBase58(),
-      secretKey: bs58.encode(greetedAccount.secretKey),
+      secretKey: t.toString('base64'),
     });
   }
   
@@ -252,7 +252,7 @@
    * Say hello
    */
    async function sayHello(body, type) {
-    console.log('Saying hello to', greetedAccount.publicKey.toBase58());
+    console.log('Posting on account', greetedAccount.publicKey.toBase58());
   
     /*
     rl.on("close", function() {
@@ -269,14 +269,14 @@
       post = Buffer.from('L' + body + '\0');
     }
     console.log("Length of post:", post.length);
-    const instruction = new TransactionInstruction({
+    const instruction = new web3.TransactionInstruction({
       keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
       programId,
       data: post,//Buffer.alloc(0), // All instructions are hellos
     });
-    await sendAndConfirmTransaction(
+    await web3.sendAndConfirmTransaction(
       connection,
-      new Transaction().add(instruction),
+      new web3.Transaction().add(instruction),
       [payerAccount, greetedAccount],
       {
         commitment: 'singleGossip',
@@ -321,16 +321,45 @@
   
   /**
    * Report the accounts owned by the program
+   * 
+   * Format: 
+   * PUBKEY
+   *       POST1
+   *       POST2
+   *       POST3
+   * PUBKEY
    */
    async function reportAccounts() {
      console.log("AHHHH");
     const accounts = await connection.getProgramAccounts(programId);
-    console.log("Accounts owned by program:");
+    // console.log("Accounts owned by program:");
+    let retStr = [];
     for(let i = 0; i < accounts.length; i++) {
-      console.log(accounts[i].pubkey.toBase58());
+      // console.log(accounts[i].pubkey.toBase58());
+      retStr.push(accounts[i].pubkey.toBase58());
       let posts = await getArrayOfPosts(accounts[i].pubkey);
-      console.log(posts);
+      // console.log(posts);
+      for(let j = 0; j < posts.length; j++) {
+        retStr.push(posts[j]);
+      }
+      /*
+      if(posts.length == 0) {
+        retStr += "\n";
+        continue;
+      }
+      retStr += "\n\t";
+      let j = 0;
+      for (; j < posts.length; j++) {
+        retStr += posts[j];
+        if(j == posts.length - 1) {
+          retStr += "\n";
+          continue;
+        }
+        retStr += "\n\t"
+      }
+      */
     }
+    return retStr;
   }
   
    async function getArrayOfPosts(pk) {
@@ -352,3 +381,5 @@
   exports.establishPayer = establishPayer;
   exports.loadProgram = loadProgram;
   exports.reportAccounts = reportAccounts;
+  exports.sayHello = sayHello;
+  exports.reportHellos = reportHellos;
