@@ -1,7 +1,14 @@
-$primary-color: darkorchid
+$primary-color: royalblue
 $secondary-color: white
 
 $nav-font-size: 30px
+$breakpoint-2: 700px
+$breakpoint-3: 1200px
+$breakpoint-4: 1600px
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow&display=swap')
+body
+    font-family: 'Barlow', sans-serif
 
 @mixin icon
     width: $nav-font-size * 1.25
@@ -11,10 +18,11 @@ $nav-font-size: 30px
         color: $primary-color
         font-size: $nav-font-size * 0.85
 
-
+@mixin transition
+    transition: 0.3s all
 
 nav
-    background-color: $primary-color
+    background-color: darken($primary-color, 15)
     padding: 10px 0 10px 15px
     span
         display: inline-block
@@ -24,6 +32,45 @@ nav
 .help-button
     @include icon
     margin: 0px 10px
+
+.help-button:hover
+    cursor: pointer
+
+.flex-container
+    width: 24.6%
+    margin: 5px 0% 0 0.32%
+
+@media (max-width: $breakpoint-4)
+    .flex-container
+        width: 32.5%
+        margin: 5px 0% 0 0.6%
+
+@media (max-width: $breakpoint-3)
+    .flex-container
+        width: 49.1%
+        margin: 5px 0% 0 0.6%
+
+@media (max-width: $breakpoint-2)
+    .flex-container
+        width: 99%
+        margin: 5px 0% 0 0.5%
+        
+.post-abbrev
+    @include transition
+    padding: 2%
+    width: 100%
+    height: 250px
+    background-color: $primary-color
+    color: $secondary-color
+    block-overflow: ellipsis
+    max-lines: 5
+    overflow: hidden
+
+.post-abbrev:hover
+    background-color: darken($primary-color, 15)
+    cursor: pointer
+    border-top-right-radius: 1.5em
+    
 
 
     

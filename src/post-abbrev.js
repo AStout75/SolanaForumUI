@@ -6,9 +6,12 @@ class PostAbbrev extends React.Component {
 
     render() {
         return (
-        <div>
+        <div className="post-abbrev">
             <div>
-                
+                <h2>{this.props.title}</h2>
+            </div>
+            <div>
+                <p>{this.props.content}</p>
             </div>
         </div>
         )
