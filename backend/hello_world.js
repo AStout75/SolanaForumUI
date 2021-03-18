@@ -8,7 +8,7 @@
   
   // @ts-ignore
 //   import buffer_layout_1 from 'buffer-layout';
-    var buffer_layout_1 = require("buffer-layout");
+    const buffer_layout_1 = require("buffer-layout");
     var lo = buffer_layout_1;
   
   const url1 = require('./util/url');
@@ -96,9 +96,21 @@
     console.log("Account has used", i, "out of", d.length, "available bytes");
   }
   
-  function arrayOfPosts(d, key) {
+  function readPubkey(d, index) {
+    let returned = Buffer.alloc(32);
+    for(let i = 0; i < 32; i++) {
+      returned[i] = d.readUInt8(i + index);
+    }
+    return new web3.PublicKey(returned);
+  }
+
+  // Parses account data buffer into an array of post objects
+  // Each object at least has a type field and a blank body
+  function arrayOfPosts(d) {
     let readType = false;
-    let currentPost = "";
+    // Target of the report,like,reply
+    let readTarget = false;
+    let currentPost = { body: "", target: "" };
     let i = 2;
     let x = 1;
     const postCount = d.readUInt16LE(0);
@@ -110,19 +122,31 @@
       }
       if(!readType) {
         // process.stdout.write("Type: " + String.fromCharCode(d.readUInt8(i)));
-        currentPost += "Type: " + String.fromCharCode(d.readUInt8(i)) + " - ";
+        currentPost.type = String.fromCharCode(d.readUInt8(i));
         readType = true;
       }
       else if(d.readUInt8(i) == 0) {
         // console.log("\tBody:", currentPost);
-        let toPush = (x + " - " + currentPost);
-        x++;
-        ret.push(toPush)
-        currentPost = "";
+        //let toPush = (x + " - " + currentPost);
+        //x++;
+        //ret.push(toPush)
+        ret.push(currentPost);
+        // RESET VARIABLES
+        currentPost = { body: "", target: "" };
         readType = false;
+        readTarget = false;
       }
       else {
-        currentPost += String.fromCharCode(d.readUInt8(i));
+        if(currentPost.type != "P" && !readTarget) {
+          currentPost.target = { pubkey: readPubkey(d, i) };
+          i += 32;
+          currentPost.target.index = d.readUInt16LE(i);
+          i++;
+          readTarget = true;
+        }
+        else {
+          currentPost.body += String.fromCharCode(d.readUInt8(i));
+        }
       }
     }
     // console.log("Account has used", i, "out of", d.length, "available bytes");
@@ -251,7 +275,7 @@
   /**
    * Say hello
    */
-   async function sayHello(body, type) {
+   async function sayHello(body) {
     console.log('Posting on account', greetedAccount.publicKey.toBase58());
   
     /*
@@ -261,18 +285,43 @@
     });
     */
     //const post = Buffer.from('Ptest\0');
-    let post = Buffer.from("");
-    if (type == "post") {
-      post = Buffer.from('P' + body + '\0');
-    }
-    else if (type == "like") {
-      post = Buffer.from('L' + body + '\0');
-    }
+    let post = Buffer.from('P' + body + '\0');
     console.log("Length of post:", post.length);
     const instruction = new web3.TransactionInstruction({
       keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
       programId,
-      data: post,//Buffer.alloc(0), // All instructions are hellos
+      data: post,
+    });
+    await web3.sendAndConfirmTransaction(
+      connection,
+      new web3.Transaction().add(instruction),
+      [payerAccount, greetedAccount],
+      {
+        commitment: 'singleGossip',
+        preflightCommitment: 'singleGossip',
+      },
+    );
+  }
+
+  async function replyToPost(body, targetPubkey, targetIndex) {
+    let post = Buffer.alloc(1 + 32 + 2 + body.length + 1);
+    console.log("Buffer is:", post.toString("hex"));
+    post.writeUInt8(82, 0);
+    console.log("Buffer is:", post.toString("hex"));
+    for(let i = 0; i < 32; i++) {
+      post.writeUInt8(targetPubkey.toBuffer()[i], i + 1);
+    }
+    post.writeUInt16LE(parseInt(targetIndex), 33);
+    for(let i = 0; i < body.length; i++) {
+      post.writeUInt8(body.charCodeAt(i), 35 + i);
+    }
+    post[post.length - 1] = 0; // This is technically unnecessary since buffers are 0-initialized
+    console.log("Length of post:", post.length);
+    console.log("Sent reply with buffer:", post.toString("hex"));
+    const instruction = new web3.TransactionInstruction({
+      keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
+      programId,
+      data: post,
     });
     await web3.sendAndConfirmTransaction(
       connection,
@@ -360,19 +409,27 @@
     }
     return retStr;
   }
+
+  // Return an array of objects, where each element represents the complete data for 1 account
+  // Each object in the array contains:
+  //  publicKey: The account's public key
+  //  posts: An array of all posts on the account
+  //    The format of each post object depends on the type, but all will have a type field
+  async function bundleAllPosts() {
+    let returnedArray = [];
+    const accounts = await connection.getProgramAccounts(programId);
+    for(let i = 0; i < accounts.length; i++) {
+      returnedArray.push({ pubkey: accounts[i].pubkey.toBase58(), posts: await getArrayOfPosts(accounts[i].pubkey)});
+    }
+    return returnedArray;
+  }
   
    async function getArrayOfPosts(pk) {
     const accountInfo = await connection.getAccountInfo(pk);
     if (accountInfo === null) {
       throw 'Error: cannot get data for account ';
     }
-    if (arrayOfPosts(accountInfo.data, pk) != null) {
-      return arrayOfPosts(accountInfo.data, pk);
-    }
-    else {
-      var x =  [""];
-      return x;
-    }
+    return arrayOfPosts(accountInfo.data);
   }
 
   exports.arrayOfPosts = arrayOfPosts;
@@ -382,3 +439,5 @@
   exports.reportAccounts = reportAccounts;
   exports.sayHello = sayHello;
   exports.reportHellos = reportHellos;
+  exports.bundleAllPosts = bundleAllPosts;
+  exports.replyToPost = replyToPost;

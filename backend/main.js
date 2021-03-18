@@ -17,14 +17,15 @@
 //     getArrayOfPosts
 //   } from './hello_world';
 
-  const hw1 = require('./hello_world');
+  const { PublicKey } = require('@solana/web3.js');
+const hw1 = require('./hello_world');
   /* Web server */
   const server = require("./server-setup");
   const events = require("./socket-events");
 const { sleep } = require('./util/sleep');
   
   function getAllPosts() {
-    return hw1.reportAccounts();
+    return hw1.bundleAllPosts();
   }
 
   async function main() {
@@ -41,20 +42,29 @@ const { sleep } = require('./util/sleep');
     // Load the program if not already loaded
     await hw1.loadProgram();
 
-    let accountsString = await hw1.reportAccounts();
-    console.log(accountsString);
+    let accountsBundle = await hw1.bundleAllPosts();
     console.log("Response from Solana validator:");
-    console.log(accountsString);
+    for(let i = 0; i < accountsBundle.length; i++) {
+      console.log(accountsBundle[i]);
+    }
     io.on('connection', socket => {
       console.log('user connected');
       
       socket.on('request-posts', () => {
-          console.log(accountsString);
-          socket.emit('send-posts', accountsString);
+          console.log(accountsBundle);
+          socket.emit('send-posts', accountsBundle);
       });
 
       socket.on('new-post', body => {
           hw1.sayHello(body, "post");
+      });
+
+      socket.on('reply-post', reply => {
+          let pk = new PublicKey(reply.target.pubkey);
+          hw1.replyToPost(reply.body, pk, reply.target.index);
+          console.log("body:", reply.body);
+          console.log("pubkey:", pk.toBuffer().toString("hex"));
+          console.log("index:", reply.target.index);
       });
   })
 
@@ -63,7 +73,7 @@ const { sleep } = require('./util/sleep');
       // TODO this is kind of messy but idk how to do it
       // aside from polling like this
       await sleep(500);
-      accountsString = await getAllPosts();
+      accountsBundle = await getAllPosts();
     }
   }
   

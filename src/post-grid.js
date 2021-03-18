@@ -1,4 +1,5 @@
 
+//import { parse } from "../node_modules/dotenv/types/index";
 import PostAbbrev from "./post-abbrev";
 import SocketContext from "./socket-context";
 
@@ -6,18 +7,27 @@ class PostGrid extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            posts: []
+            postList: []
         }
 
         //Update the grid of posts when the server refreshes us
-        this.props.socket.on("send-posts", posts => {
+        this.props.socket.on("send-posts", accounts => {
             // ! Later, force the client to process the raw post data
-            this.parsePostString(posts);
+            let parsedPosts = [];
+            for(let i = 0; i < accounts.length; i++) {
+                for(let j = 0; j < accounts[i].posts.length; j++) {
+                    parsedPosts.push({ poster: accounts[i].pubkey, 
+                                       body: accounts[i].posts[j].body, 
+                                       index: j, type: accounts[i].posts[j].type, 
+                                       target: accounts[i].posts[j] });
+                }
+            }
+            this.setState({ postList: parsedPosts })
         });
 
         this.props.socket.emit('request-posts');
     }
-
+    /*
     parsePostString(posts) {
         var parsedPosts = [];
         posts.forEach(element => {
@@ -33,15 +43,15 @@ class PostGrid extends React.Component {
             posts: parsedPosts
         });
     }
-
+    */
     render() {
         
         return (
         <div className="post-grid d-flex align-items-center flex-wrap">
-            {this.state.posts.map((element, index, arr) => {
+            {this.state.postList.map((element, index, arr) => {
                 return (
                     <div className="flex-container" key={index}>
-                        <PostAbbrev title={element.title} content={element.content} />
+                        <PostAbbrev socket={this.props.socket} title={element.poster} content={element.body} posterPubkey={element.poster} postIndex={element.index} />
                     </div>
                 );
             })}
