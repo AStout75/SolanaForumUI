@@ -13,7 +13,7 @@ class PostAbbrev extends React.Component {
             <div>
                 <p>{this.props.content}</p>
             </div>
-            <div className="post-icons d-flex align-items-center justify-content-end">
+            <div className="post-icons rounded d-flex align-items-center justify-content-end">
                 <div className="icon rounded-circle d-flex align-items-center justify-content-center">
                     <i className="fas fa-info fa-sm"></i>
                 </div>

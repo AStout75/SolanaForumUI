@@ -134,7 +134,7 @@
    * Establish a connection to the cluster
    */
  async function establishConnection() {
-    connection = new web3.Connection('http://localhost:8899', 'singleGossip');
+    connection = new web3.Connection(/*'http://localhost:8899'*/url1.url, 'singleGossip');
     const version = await connection.getVersion();
     console.log('Connection to cluster established:', url1.url, version);
   }

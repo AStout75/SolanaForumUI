@@ -37,7 +37,7 @@ class PostGrid extends React.Component {
     render() {
         
         return (
-        <div className="d-flex align-items-center flex-wrap">
+        <div className="post-grid d-flex align-items-center flex-wrap">
             {this.state.posts.map((element, index, arr) => {
                 return (
                     <div className="flex-container" key={index}>

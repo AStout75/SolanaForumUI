@@ -17,6 +17,9 @@ class NavBar extends React.Component {
                     <i className="fas fa-pencil-alt fa-sm"></i>
                 </div>
                 <div className="icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i className="fas fa-wallet fa-sm"></i>
+                </div>
+                <div className="icon rounded-circle d-flex align-items-center justify-content-center">
                     <i className="fas fa-info fa-sm"></i>
                 </div>
             </div>

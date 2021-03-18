@@ -2,6 +2,11 @@
  * Hello world
  */
 
+//USE THIS PROGRAM ID FOR NOW:
+//"programId":"DDC6DdQcLEuP3j2F46jJrE4tW56YDrrDDKApo4qQ4vQc"
+
+
+
 //  import {
 //     establishConnection,
 //     establishPayer,
@@ -44,6 +49,7 @@ const { sleep } = require('./util/sleep');
       console.log('user connected');
       
       socket.on('request-posts', () => {
+          console.log(accountsString);
           socket.emit('send-posts', accountsString);
       });
 

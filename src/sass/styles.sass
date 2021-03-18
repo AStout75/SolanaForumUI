@@ -1,5 +1,6 @@
 $primary-color: royalblue
 $secondary-color: white
+$tertiary-color: slategray
 
 $nav-font-size: 30px
 $breakpoint-2: 700px
@@ -15,8 +16,8 @@ body
 
 @mixin icon
     
-    width: $nav-font-size * 1.25
-    height: $nav-font-size * 1.25
+    width: $nav-font-size * 1.4
+    height: $nav-font-size * 1.4
     background-color: $secondary-color
     i
         color: $primary-color
@@ -42,7 +43,7 @@ nav
         @include transition
 
 .icon:hover
-    box-shadow: 0px 0px 2px white
+    box-shadow: 0px 0px 3px white
     cursor: pointer
     i
         color: darken($primary-color, 15)
@@ -65,6 +66,9 @@ nav
     .flex-container
         width: 99%
         margin: 5px 0% 0 0.5%
+
+.post-grid
+    margin-bottom: 5px
         
 .post-abbrev
     @include transition
@@ -86,14 +90,19 @@ nav
     //border-top-right-radius: 1.5em
     
 .post-icons
+    background: darkslategray
     position: absolute
-    bottom: 10px
+    bottom: 5px
     right: 0px
-    width: 100%
-    height: 50px
+    padding: 5px 0px 5px 10px
+    margin-right: 5px
     
-
-
+footer
+    color: $secondary-color
+    padding: 10px
+    height: 60px
+    width: 100%
+    background-color: darken($primary-color, 15)
 
 
     
