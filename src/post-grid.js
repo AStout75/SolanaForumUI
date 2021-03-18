@@ -19,7 +19,7 @@ class PostGrid extends React.Component {
                     parsedPosts.push({ poster: accounts[i].pubkey, 
                                        body: accounts[i].posts[j].body, 
                                        index: j, type: accounts[i].posts[j].type, 
-                                       target: accounts[i].posts[j] });
+                                       target: accounts[i].posts[j].target });
                 }
             }
             this.setState({ postList: parsedPosts })
