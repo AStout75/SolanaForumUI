@@ -14,12 +14,18 @@ class PostGrid extends React.Component {
         this.props.socket.on("send-posts", accounts => {
             // ! Later, force the client to process the raw post data
             let parsedPosts = [];
+            console.log(accounts);
             for(let i = 0; i < accounts.length; i++) {
                 for(let j = 0; j < accounts[i].posts.length; j++) {
-                    parsedPosts.push({ poster: accounts[i].pubkey, 
-                                       body: accounts[i].posts[j].body, 
-                                       index: j, type: accounts[i].posts[j].type, 
-                                       target: accounts[i].posts[j].target });
+                    var newPost = {
+                        poster: accounts[i].pubkey, 
+                        body: accounts[i].posts[j].body, 
+                        index: j, type: accounts[i].posts[j].type, 
+                        target: accounts[i].posts[j].target,
+                        replies: this.getRepliesToPost(accounts, accounts[i].pubkey, j)
+                    };
+                    console.log(newPost);
+                    parsedPosts.push(newPost);
                 }
             }
             this.setState({ postList: parsedPosts })
@@ -27,23 +33,31 @@ class PostGrid extends React.Component {
 
         this.props.socket.emit('request-posts');
     }
-    /*
-    parsePostString(posts) {
-        var parsedPosts = [];
-        posts.forEach(element => {
-            var splitted = element.split("-");
-            if (splitted.length == 3) {
-                var newPost = {};
-                newPost.title = splitted[0];
-                newPost.content = splitted[2];
-                parsedPosts.push(newPost);
+
+    /* Input the account data, output a list of "posts" (replies) to the specified
+    post, identified by input params pubkey and index */
+
+    getRepliesToPost(accounts, pubkey, index) {
+        var res = [];
+        for(let i = 0; i < accounts.length; i++) {
+            for(let j = 0; j < accounts[i].posts.length; j++) {
+                if (accounts[i].posts[j].type == "R") {
+                    //target acquired.
+                    if (accounts[i].pubkey == pubkey && j == index) {
+                        //Match
+                        res.push({
+                            poster: accounts[i].pubkey, 
+                            body: accounts[i].posts[j].body, 
+                            index: j, type: accounts[i].posts[j].type, 
+                            target: accounts[i].posts[j].target,
+                        });
+                    }
+                }
             }
-        });
-        this.setState({
-            posts: parsedPosts
-        });
+        }
+        return res;
     }
-    */
+
     render() {
         
         return (
@@ -51,7 +65,7 @@ class PostGrid extends React.Component {
             {this.state.postList.map((element, index, arr) => {
                 return (
                     <div className="flex-container" key={index}>
-                        <PostAbbrev socket={this.props.socket} title={element.poster} content={element.body} posterPubkey={element.poster} postIndex={element.index} />
+                        <PostAbbrev title={element.poster} content={element.body} posterPubkey={element.poster} postIndex={element.index} />
                     </div>
                 );
             })}
