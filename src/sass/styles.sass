@@ -10,16 +10,21 @@ $breakpoint-4: 1600px
 body
     font-family: 'Barlow', sans-serif
 
+@mixin transition
+    transition: 0.3s all
+
 @mixin icon
+    
     width: $nav-font-size * 1.25
     height: $nav-font-size * 1.25
     background-color: $secondary-color
     i
         color: $primary-color
         font-size: $nav-font-size * 0.85
+    i:hover
+        color: darken($primary-color, 15)
 
-@mixin transition
-    transition: 0.3s all
+
 
 nav
     background-color: darken($primary-color, 15)
@@ -29,12 +34,18 @@ nav
         color: $secondary-color
         font-size: $nav-font-size
 
-.help-button
+.icon
+    @include transition
     @include icon
-    margin: 0px 10px
+    margin-right: 10px
+    i
+        @include transition
 
-.help-button:hover
+.icon:hover
+    box-shadow: 0px 0px 2px white
     cursor: pointer
+    i
+        color: darken($primary-color, 15)
 
 .flex-container
     width: 24.6%
@@ -57,9 +68,10 @@ nav
         
 .post-abbrev
     @include transition
+    position: relative
     padding: 2%
     width: 100%
-    height: 250px
+    height: 300px
     background-color: $primary-color
     color: $secondary-color
     block-overflow: ellipsis
@@ -67,10 +79,21 @@ nav
     overflow: hidden
 
 .post-abbrev:hover
-    background-color: darken($primary-color, 15)
+    //background-color: darken($primary-color, 15)
+
     cursor: pointer
-    border-top-right-radius: 1.5em
+    box-shadow: 0px 0px 13px white
+    //border-top-right-radius: 1.5em
     
+.post-icons
+    position: absolute
+    bottom: 10px
+    right: 0px
+    width: 100%
+    height: 50px
+    
+
+
 
 
     

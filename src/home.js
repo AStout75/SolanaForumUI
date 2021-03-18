@@ -13,7 +13,6 @@ class Home extends React.Component {
             <div>
                 <NavBar />
                 <PostGrid />
-                <button onClick={() => {this.props.socket.emit('new-post', prompt("Enter post body:"))}}>New Post</button>
             </div>
         )
     }

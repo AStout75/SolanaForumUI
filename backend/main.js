@@ -44,12 +44,10 @@ const { sleep } = require('./util/sleep');
       console.log('user connected');
       
       socket.on('request-posts', () => {
-          console.log('posts requested');
           socket.emit('send-posts', accountsString);
       });
 
       socket.on('new-post', body => {
-          console.log("new post:", body);
           hw1.sayHello(body, "post");
       });
   })

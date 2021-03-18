@@ -13,6 +13,18 @@ class PostAbbrev extends React.Component {
             <div>
                 <p>{this.props.content}</p>
             </div>
+            <div className="post-icons d-flex align-items-center justify-content-end">
+                <div className="icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i className="fas fa-info fa-sm"></i>
+                </div>
+                <div className="icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i className="fas fa-eye-slash fa-sm"></i>
+                </div>
+                <div className="icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i className="fas fa-flag fa-sm"></i>
+                </div>
+                
+            </div>
         </div>
         )
     }

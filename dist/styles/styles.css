@@ -13,19 +13,30 @@ nav span {
   font-size: 30px;
 }
 
-.help-button {
+.icon {
+  transition: 0.3s all;
   width: 37.5px;
   height: 37.5px;
   background-color: white;
-  margin: 0px 10px;
+  margin-right: 10px;
 }
-.help-button i {
+.icon i {
   color: royalblue;
   font-size: 25.5px;
 }
+.icon i:hover {
+  color: #1d44b8;
+}
+.icon i {
+  transition: 0.3s all;
+}
 
-.help-button:hover {
+.icon:hover {
+  box-shadow: 0px 0px 2px white;
   cursor: pointer;
+}
+.icon:hover i {
+  color: #1d44b8;
 }
 
 .flex-container {
@@ -53,9 +64,10 @@ nav span {
 }
 .post-abbrev {
   transition: 0.3s all;
+  position: relative;
   padding: 2%;
   width: 100%;
-  height: 250px;
+  height: 300px;
   background-color: royalblue;
   color: white;
   block-overflow: ellipsis;
@@ -64,9 +76,16 @@ nav span {
 }
 
 .post-abbrev:hover {
-  background-color: #1d44b8;
   cursor: pointer;
-  border-top-right-radius: 1.5em;
+  box-shadow: 0px 0px 13px white;
+}
+
+.post-icons {
+  position: absolute;
+  bottom: 10px;
+  right: 0px;
+  width: 100%;
+  height: 50px;
 }
 
 /*.help-button

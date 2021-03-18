@@ -9,11 +9,8 @@ class PostGrid extends React.Component {
             posts: []
         }
 
-        console.log("post grid const");
-
         //Update the grid of posts when the server refreshes us
         this.props.socket.on("send-posts", posts => {
-            console.log("GOT POSTS", posts);
             // ! Later, force the client to process the raw post data
             this.parsePostString(posts);
         });
@@ -25,7 +22,6 @@ class PostGrid extends React.Component {
         var parsedPosts = [];
         posts.forEach(element => {
             var splitted = element.split("-");
-            console.log(splitted);
             if (splitted.length == 3) {
                 var newPost = {};
                 newPost.title = splitted[0];
@@ -44,8 +40,8 @@ class PostGrid extends React.Component {
         <div className="d-flex align-items-center flex-wrap">
             {this.state.posts.map((element, index, arr) => {
                 return (
-                    <div className="flex-container">
-                        <PostAbbrev key={index} title={element.title} content={element.content} />
+                    <div className="flex-container" key={index}>
+                        <PostAbbrev title={element.title} content={element.content} />
                     </div>
                 );
             })}
