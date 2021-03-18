@@ -43,7 +43,7 @@ nav
         @include transition
 
 .icon:hover
-    box-shadow: 0px 0px 3px white
+    box-shadow: 0px 0px 0px white
     cursor: pointer
     i
         color: darken($primary-color, 15)
@@ -86,16 +86,19 @@ nav
     //background-color: darken($primary-color, 15)
 
     cursor: pointer
-    box-shadow: 0px 0px 13px white
+    box-shadow: 0px 0px 20px white
     //border-top-right-radius: 1.5em
     
 .post-icons
-    background: darkslategray
     position: absolute
     bottom: 5px
     right: 0px
     padding: 5px 0px 5px 10px
     margin-right: 5px
+    .icon
+        opacity: 0.5
+    .icon:hover
+        opacity: 1
     
 footer
     color: $secondary-color

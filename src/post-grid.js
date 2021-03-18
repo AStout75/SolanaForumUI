@@ -65,7 +65,7 @@ class PostGrid extends React.Component {
             {this.state.postList.map((element, index, arr) => {
                 return (
                     <div className="flex-container" key={index}>
-                        <PostAbbrev title={element.poster} content={element.body} posterPubkey={element.poster} postIndex={element.index} />
+                        <PostAbbrev post={element} />
                     </div>
                 );
             })}
