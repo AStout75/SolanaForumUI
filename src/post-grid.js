@@ -41,10 +41,12 @@ class PostGrid extends React.Component {
         var res = [];
         for(let i = 0; i < accounts.length; i++) {
             for(let j = 0; j < accounts[i].posts.length; j++) {
-                if (accounts[i].posts[j].type == "R") {
+                if (accounts[i].posts[j].type == 'R') {
+                    console.log("here")
                     //target acquired.
-                    if (accounts[i].pubkey == pubkey && j == index) {
+                    if (j == index) {
                         //Match
+                        console.log(accounts[i].posts[j].body)
                         res.push({
                             poster: accounts[i].pubkey, 
                             body: accounts[i].posts[j].body, 

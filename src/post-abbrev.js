@@ -33,7 +33,14 @@ class PostAbbrev extends React.Component {
                     <div className="icon rounded-circle d-flex align-items-center justify-content-center">
                         <i className="fas fa-eye-slash fa-sm"></i>
                     </div>
-                    <div className="icon rounded-circle d-flex align-items-center justify-content-center">
+                    <div onClick={() => {
+                        let reply = { target: {} };
+                        reply.target.pubkey = this.props.post.poster;
+                        reply.target.index = this.props.post.index;
+                        this.props.socket.emit('report-post', reply);
+                        window.alert("Reported post " + reply.target.index)
+                    }}
+                        className="icon rounded-circle d-flex align-items-center justify-content-center">
                         <i className="fas fa-flag fa-sm"></i>
                     </div>
                 </div>
