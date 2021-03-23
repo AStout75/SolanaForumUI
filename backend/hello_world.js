@@ -163,7 +163,7 @@ const { relative } = require('path');
    * Establish a connection to the cluster
    */
  async function establishConnection() {
-    connection = new web3.Connection('http://localhost:8899'/*url1.url*/, 'singleGossip');
+    connection = new web3.Connection(/*'http://localhost:8899'*/url1.url, 'singleGossip');
     const version = await connection.getVersion();
     console.log('Connection to cluster established:', url1.url, version);
   }
@@ -374,9 +374,7 @@ const { relative } = require('path');
       post.writeUInt8(targetPubkey.toBuffer()[i], i + 1);
     }
     post.writeUInt16LE(parseInt(targetIndex), 33);
-    for(let i = 0; i < body.length; i++) {
-      post.writeUInt8(body.charCodeAt(i), 35 + i);
-    }
+    
     console.log("Length of post:", post.length);
     console.log("Sent like with buffer:", post.toString("hex"));
     const instruction = new web3.TransactionInstruction({

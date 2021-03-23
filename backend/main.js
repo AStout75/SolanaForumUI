@@ -76,6 +76,12 @@ const { sleep } = require('./util/sleep');
         console.log("pubkey:", pk.toBuffer().toString("hex"));
         console.log("index:", report.target.index);
     });
+
+      socket.on('like-post', like => {
+        let pk = new PublicKey(like.target.pubkey);
+        console.log("Recieved report for post", pk.toBase58(), ":", like.target.index);
+        hw1.likePost(pk, like.target.index);
+      });
   })
 
     console.log('Success');

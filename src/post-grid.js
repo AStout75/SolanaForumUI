@@ -17,13 +17,18 @@ class PostGrid extends React.Component {
             console.log(accounts);
             for(let i = 0; i < accounts.length; i++) {
                 for(let j = 0; j < accounts[i].posts.length; j++) {
+                    if (accounts[i].posts[j].type != 'P') {
+                        continue;
+                    }
                     console.log(accounts[i].posts[j].target);
                     var newPost = {
                         poster: accounts[i].pubkey, 
                         body: accounts[i].posts[j].body, 
                         index: j, type: accounts[i].posts[j].type, 
                         target: accounts[i].posts[j].target,
-                        replies: this.getRepliesToPost(accounts, accounts[i].pubkey, j)
+                        replies: this.getRepliesToPost(accounts, accounts[i].pubkey, j),
+                        likes: this.getLikesForPost(accounts, accounts[i].pubkey, j),
+                        reports: this.getReportsForPost(accounts, accounts[i].pubkey, j)
                     };
                     console.log(newPost);
                     parsedPosts.push(newPost);
@@ -60,6 +65,45 @@ class PostGrid extends React.Component {
                 }
             }
         }
+        return res;
+    }
+
+    getLikesForPost(accounts, pubkey, index) {
+        var res = 0;
+        for(let i = 0; i < accounts.length; i++) {
+            for(let j = 0; j < accounts[i].posts.length; j++) {
+                if (accounts[i].posts[j].type == 'L') {
+                    //console.log("here");
+                    //target acquired.
+                    //console.log("\t", accounts[i].posts[j].target.pubkey, ":", accounts[i].posts[j].target.index);
+                    if (accounts[i].posts[j].target.index == index && accounts[i].posts[j].target.pubkey == pubkey) {
+                        //Match
+                        //console.log("Found reply:", accounts[i].posts[j].body);
+                        res++;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+    
+    getReportsForPost(accounts, pubkey, index) {
+        var res = 0;
+        for(let i = 0; i < accounts.length; i++) {
+            for(let j = 0; j < accounts[i].posts.length; j++) {
+                if (accounts[i].posts[j].type == 'X') {
+                    //console.log("here");
+                    //target acquired.
+                    //console.log("\t", accounts[i].posts[j].target.pubkey, ":", accounts[i].posts[j].target.index);
+                    if (accounts[i].posts[j].target.index == index && accounts[i].posts[j].target.pubkey == pubkey) {
+                        //Match
+                        //console.log("Found reply:", accounts[i].posts[j].body);
+                        res++;
+                    }
+                }
+            }
+        }
+        console.log("reports is ", res);
         return res;
     }
 
