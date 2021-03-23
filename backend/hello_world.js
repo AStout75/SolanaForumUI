@@ -15,6 +15,7 @@
   const store1 = require('./util/store');
   const newAccountWithLamp = require('./util/new-account-with-lamports');
   const BaseConverter = require('base-x');
+const { relative } = require('path');
   const bs58 = BaseConverter("base-58");
   /**
    * Connection to the network
@@ -104,53 +105,57 @@
     return new web3.PublicKey(returned);
   }
 
+  function readPostBody(d, index, length) {
+    let returned = "";
+    for(let i = 0; i < length; i++) {
+      returned += String.fromCharCode(d.readUInt8(i + index));
+    }
+    console.log("Post body:", returned);
+    return returned;
+  }
+
   // Parses account data buffer into an array of post objects
   // Each object at least has a type field and a blank body
   function arrayOfPosts(d) {
-    let readType = false;
-    // Target of the report,like,reply
-    let readTarget = false;
-    let currentPost = { body: "", target: "" };
     let i = 2;
-    let x = 1;
     const postCount = d.readUInt16LE(0);
-    var ret = [];
-    for(; i < d.length; i++) {
-      // Stop after reading 2 terminators in a row
-      if(d.readUInt8(i) == 0 && d.readUInt8(i - 1) == 0) {
-        return ret;
+    console.log("There are", postCount, "posts in this account.");
+    let ret = [];
+    // String.fromCharCode(uint8)
+    for(let post = 0; post < postCount; post++) {
+      let currentPost = { type: "", body: "", target: "" };
+      let currentLength = d.readUInt16LE(i);
+      if(currentLength == 0)
+        throw "Invalid account data";
+      // Skip length
+      i += 2;
+      currentPost.type = String.fromCharCode(d.readUInt8(i));
+      // Skip type
+      i += 1;
+      switch(currentPost.type) {
+      case "P":
+        // Read body
+        currentPost.body = readPostBody(d, i, currentLength - 1);
+        break;
+      case "R":
+      case "X":
+        // Read ID
+        currentPost.target = { pubkey: readPubkey(d, i).toBase58(), index: 0 };
+        currentPost.target.index = d.readUInt16LE(i + 32);
+        currentPost.body = readPostBody(d, i + 34, currentLength - 1 - 35);
+        break;
+      case "L":
+        // Read ID
+        currentPost.target = { pubkey: readPubkey(d, i).toBase58(), index: 0 };
+        currentPost.target.index = d.readUInt16LE(i + 32);
+        break;
+      default:
+        throw "Could not parse post";
       }
-      if(!readType) {
-        // process.stdout.write("Type: " + String.fromCharCode(d.readUInt8(i)));
-        currentPost.type = String.fromCharCode(d.readUInt8(i));
-        readType = true;
-      }
-      else if(d.readUInt8(i) == 0) {
-        // console.log("\tBody:", currentPost);
-        //let toPush = (x + " - " + currentPost);
-        //x++;
-        //ret.push(toPush)
-        ret.push(currentPost);
-        // RESET VARIABLES
-        currentPost = { body: "", target: "" };
-        readType = false;
-        readTarget = false;
-      }
-      else {
-        if(currentPost.type != "P" && !readTarget) {
-          currentPost.target = { pubkey: readPubkey(d, i) };
-          i += 32;
-          currentPost.target.index = d.readUInt16LE(i);
-          i++;
-          readTarget = true;
-        }
-        else {
-          currentPost.body += String.fromCharCode(d.readUInt8(i));
-        }
-      }
+      i += currentLength - 1;
+      ret.push(currentPost);
     }
     // console.log("Account has used", i, "out of", d.length, "available bytes");
-    // console.log(ret)
     return ret;
   }
   
@@ -158,7 +163,7 @@
    * Establish a connection to the cluster
    */
  async function establishConnection() {
-    connection = new web3.Connection(/*'http://localhost:8899'*/url1.url, 'singleGossip');
+    connection = new web3.Connection('http://localhost:8899'/*url1.url*/, 'singleGossip');
     const version = await connection.getVersion();
     console.log('Connection to cluster established:', url1.url, version);
   }
@@ -285,7 +290,7 @@
     });
     */
     //const post = Buffer.from('Ptest\0');
-    let post = Buffer.from('P' + body + '\0');
+    let post = Buffer.from('P' + body);
     console.log("Length of post:", post.length);
     const instruction = new web3.TransactionInstruction({
       keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],

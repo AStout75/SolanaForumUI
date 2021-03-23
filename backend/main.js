@@ -51,7 +51,7 @@ const { sleep } = require('./util/sleep');
       console.log('user connected');
       
       socket.on('request-posts', () => {
-          console.log(accountsBundle);
+          //console.log(accountsBundle);
           socket.emit('send-posts', accountsBundle);
       });
 

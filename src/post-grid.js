@@ -17,6 +17,7 @@ class PostGrid extends React.Component {
             console.log(accounts);
             for(let i = 0; i < accounts.length; i++) {
                 for(let j = 0; j < accounts[i].posts.length; j++) {
+                    console.log(accounts[i].posts[j].target);
                     var newPost = {
                         poster: accounts[i].pubkey, 
                         body: accounts[i].posts[j].body, 
@@ -38,15 +39,17 @@ class PostGrid extends React.Component {
     post, identified by input params pubkey and index */
 
     getRepliesToPost(accounts, pubkey, index) {
+        console.log("Looking for replies to", pubkey, ":", index);
         var res = [];
         for(let i = 0; i < accounts.length; i++) {
             for(let j = 0; j < accounts[i].posts.length; j++) {
                 if (accounts[i].posts[j].type == 'R') {
-                    console.log("here")
+                    //console.log("here");
                     //target acquired.
-                    if (j == index) {
+                    console.log("\t", accounts[i].posts[j].target.pubkey, ":", accounts[i].posts[j].target.index);
+                    if (accounts[i].posts[j].target.index == index && accounts[i].posts[j].target.pubkey == pubkey) {
                         //Match
-                        console.log(accounts[i].posts[j].body)
+                        console.log("Found reply:", accounts[i].posts[j].body);
                         res.push({
                             poster: accounts[i].pubkey, 
                             body: accounts[i].posts[j].body, 
