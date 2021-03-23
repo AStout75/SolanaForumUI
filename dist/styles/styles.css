@@ -84,6 +84,10 @@ nav span {
   box-shadow: 0px 0px 20px white;
 }
 
+.post-reported {
+  background-color: crimson;
+}
+
 .post-icons {
   position: absolute;
   bottom: 5px;
