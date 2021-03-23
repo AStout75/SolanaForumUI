@@ -142,7 +142,7 @@ const { relative } = require('path');
         // Read ID
         currentPost.target = { pubkey: readPubkey(d, i).toBase58(), index: 0 };
         currentPost.target.index = d.readUInt16LE(i + 32);
-        currentPost.body = readPostBody(d, i + 34, currentLength - 1 - 35);
+        currentPost.body = readPostBody(d, i + 34, currentLength - 35);
         break;
       case "L":
         // Read ID
@@ -309,7 +309,7 @@ const { relative } = require('path');
   }
 
   async function replyToPost(body, targetPubkey, targetIndex) {
-    let post = Buffer.alloc(1 + 32 + 2 + body.length + 1);
+    let post = Buffer.alloc(1 + 32 + 2 + body.length);
     console.log("Buffer is:", post.toString("hex"));
     post.writeUInt8(82, 0);
     console.log("Buffer is:", post.toString("hex"));
@@ -320,7 +320,6 @@ const { relative } = require('path');
     for(let i = 0; i < body.length; i++) {
       post.writeUInt8(body.charCodeAt(i), 35 + i);
     }
-    post[post.length - 1] = 0; // This is technically unnecessary since buffers are 0-initialized
     console.log("Length of post:", post.length);
     console.log("Sent reply with buffer:", post.toString("hex"));
     const instruction = new web3.TransactionInstruction({
@@ -337,6 +336,64 @@ const { relative } = require('path');
         preflightCommitment: 'singleGossip',
       },
     );
+  }
+
+  async function reportPost(body, targetPubkey, targetIndex) {
+    let post = Buffer.alloc(1 + 32 + 2 + body.length);
+    post.writeUInt8("X".charCodeAt(0), 0);
+    for(let i = 0; i < 32; i++) {
+      post.writeUInt8(targetPubkey.toBuffer()[i], i + 1);
+    }
+    post.writeUInt16LE(parseInt(targetIndex), 33);
+    for(let i = 0; i < body.length; i++) {
+      post.writeUInt8(body.charCodeAt(i), 35 + i);
+    }
+    console.log("Length of post:", post.length);
+    console.log("Sent reply with buffer:", post.toString("hex"));
+    const instruction = new web3.TransactionInstruction({
+      keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
+      programId,
+      data: post,
+    });
+    await web3.sendAndConfirmTransaction(
+      connection,
+      new web3.Transaction().add(instruction),
+      [payerAccount, greetedAccount],
+      {
+        commitment: 'singleGossip',
+        preflightCommitment: 'singleGossip',
+      },
+    );
+    console.log("Reported post with buffer:", post.toString("hex"));
+  }
+
+  async function likePost(targetPubkey, targetIndex) {
+    let post = Buffer.alloc(1 + 32 + 2);
+    post.writeUInt8("L".charCodeAt(0), 0);
+    for(let i = 0; i < 32; i++) {
+      post.writeUInt8(targetPubkey.toBuffer()[i], i + 1);
+    }
+    post.writeUInt16LE(parseInt(targetIndex), 33);
+    for(let i = 0; i < body.length; i++) {
+      post.writeUInt8(body.charCodeAt(i), 35 + i);
+    }
+    console.log("Length of post:", post.length);
+    console.log("Sent like with buffer:", post.toString("hex"));
+    const instruction = new web3.TransactionInstruction({
+      keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
+      programId,
+      data: post,
+    });
+    await web3.sendAndConfirmTransaction(
+      connection,
+      new web3.Transaction().add(instruction),
+      [payerAccount, greetedAccount],
+      {
+        commitment: 'singleGossip',
+        preflightCommitment: 'singleGossip',
+      },
+    );
+    console.log("Liked post with buffer:", post.toString("hex"));
   }
   
   /**
@@ -446,3 +503,5 @@ const { relative } = require('path');
   exports.reportHellos = reportHellos;
   exports.bundleAllPosts = bundleAllPosts;
   exports.replyToPost = replyToPost;
+  exports.reportPost = reportPost;
+  exports.likePost = likePost;
