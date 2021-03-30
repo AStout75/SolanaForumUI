@@ -1,4 +1,5 @@
 import SocketContext from "./socket-context";
+import {Link} from "react-router-dom";
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -9,7 +10,7 @@ class NavBar extends React.Component {
     render() {
         return (
         <nav className="d-flex align-items-center justify-content-between">
-            <span>Solana Forum</span>
+            <Link to={"/"}><span>Solana Forum</span></Link>
             <div className="d-flex align-items-center">
                 <div 
                 onClick={() => {this.props.socket.emit('new-post', prompt("Enter post body:"))}}

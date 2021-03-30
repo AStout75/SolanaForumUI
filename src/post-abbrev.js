@@ -7,7 +7,6 @@ class PostAbbrev extends React.Component {
     }
 
     render() {
-        console.log((this.props.post.reports >= 2 ? "post-reported" : ""));
         return (
         <div className={"post-abbrev " + (this.props.post.reports >= 2 ? "post-reported" : "")}>
             <div>

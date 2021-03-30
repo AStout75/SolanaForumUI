@@ -1,13 +1,32 @@
 import SocketContext from './socket-context';
+import { BrowserRouter, Switch, Route, Redirect, useLocation } from "react-router-dom";
+
+import React from "react";
 import Home from './home';
+import PostFull from './post-full';
+import NavBar from './nav-bar';
+
 
 let socket = io();
 
-const App = props => (
-    <SocketContext.Provider value={socket}>
-        <Home />
-    </SocketContext.Provider>
-);
+const App = (props) => {
+    //const location = useLocation();
+    //console.log(location);
+    return (
+    <BrowserRouter>
+        <SocketContext.Provider value={socket}>
+            
+                <Switch>
+                    <Route exact path="/">
+                        <Home />
+                    </Route>
+                    <Route exact path="/post/:pubkey/:id" component={PostFull}>
+                    </Route>
+                </Switch>
+            
+        </SocketContext.Provider>
+    </BrowserRouter>)
+    };
   
 ReactDOM.render(
     <App />,
@@ -15,15 +34,3 @@ ReactDOM.render(
 );
 
 socket.emit('connection');
-
-
-
-//socket.emit('posts');
-/*socket.on('send-posts', text => {
-    document.getElementById("posts").innerHTML = "";
-    for(let i = 0; i < text.length; i++) {
-        document.getElementById("posts").innerHTML += "<p>";
-        document.getElementById("posts").innerHTML += text[i];
-        document.getElementById("posts").innerHTML += "</p>";
-    }
-}); */

@@ -22,6 +22,8 @@ const hw1 = require('./hello_world');
   /* Web server */
   const server = require("./server-setup");
   const events = require("./socket-events");
+
+  
 const { sleep } = require('./util/sleep');
   
   function getAllPosts() {
@@ -32,7 +34,6 @@ const { sleep } = require('./util/sleep');
     var io;
     io = server.setUpServer();
     
-  
     // Establish connection to the cluster
     await hw1.establishConnection();
   

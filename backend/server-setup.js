@@ -11,9 +11,24 @@ function setUpServer() {
 
     //Serve files
     var app = express();
+
+
     app.get('/', function(req, res) {
-        res.sendFile(path.join(process.cwd() + INDEX));
+        res.sendFile(path.join(process.cwd() + INDEX), function(err) {
+          if (err) {
+            res.status(500).send(err)
+          }
+        })
     });
+
+    app.get('/post/*', function(req, res) {
+        res.sendFile(path.join(process.cwd() + INDEX), function(err) {
+          if (err) {
+            res.status(500).send(err)
+          }
+        })
+    });
+      
     app.use(express.static(path.join(process.cwd(), 'dist')));
     
     let server = app.listen(PORT, () => console.log(`Listening on ${PORT}`));

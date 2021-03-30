@@ -1,20 +1,20 @@
+import {Link} from "react-router-dom";
 
-//import { parse } from "../node_modules/dotenv/types/index";
 import PostAbbrev from "./post-abbrev";
 import SocketContext from "./socket-context";
+import {getRepliesToPost, getLikesForPost, getReportsForPost} from "./data-util/parse";
 
 class PostGrid extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             postList: []
-        }
+        };
 
         //Update the grid of posts when the server refreshes us
         this.props.socket.on("send-posts", accounts => {
             // ! Later, force the client to process the raw post data
             let parsedPosts = [];
-            console.log(accounts);
             for(let i = 0; i < accounts.length; i++) {
                 for(let j = 0; j < accounts[i].posts.length; j++) {
                     if (accounts[i].posts[j].type != 'P') {
@@ -26,9 +26,9 @@ class PostGrid extends React.Component {
                         body: accounts[i].posts[j].body, 
                         index: j, type: accounts[i].posts[j].type, 
                         target: accounts[i].posts[j].target,
-                        replies: this.getRepliesToPost(accounts, accounts[i].pubkey, j),
-                        likes: this.getLikesForPost(accounts, accounts[i].pubkey, j),
-                        reports: this.getReportsForPost(accounts, accounts[i].pubkey, j)
+                        replies: getRepliesToPost(accounts, accounts[i].pubkey, j),
+                        likes: getLikesForPost(accounts, accounts[i].pubkey, j),
+                        reports: getReportsForPost(accounts, accounts[i].pubkey, j)
                     };
                     console.log(newPost);
                     parsedPosts.push(newPost);
@@ -40,85 +40,28 @@ class PostGrid extends React.Component {
         this.props.socket.emit('request-posts');
     }
 
-    /* Input the account data, output a list of "posts" (replies) to the specified
-    post, identified by input params pubkey and index */
-
-    getRepliesToPost(accounts, pubkey, index) {
-        console.log("Looking for replies to", pubkey, ":", index);
-        var res = [];
-        for(let i = 0; i < accounts.length; i++) {
-            for(let j = 0; j < accounts[i].posts.length; j++) {
-                if (accounts[i].posts[j].type == 'R') {
-                    //console.log("here");
-                    //target acquired.
-                    console.log("\t", accounts[i].posts[j].target.pubkey, ":", accounts[i].posts[j].target.index);
-                    if (accounts[i].posts[j].target.index == index && accounts[i].posts[j].target.pubkey == pubkey) {
-                        //Match
-                        console.log("Found reply:", accounts[i].posts[j].body);
-                        res.push({
-                            poster: accounts[i].pubkey, 
-                            body: accounts[i].posts[j].body, 
-                            index: j, type: accounts[i].posts[j].type, 
-                            target: accounts[i].posts[j].target,
-                        });
-                    }
-                }
-            }
-        }
-        return res;
-    }
-
-    getLikesForPost(accounts, pubkey, index) {
-        var res = 0;
-        for(let i = 0; i < accounts.length; i++) {
-            for(let j = 0; j < accounts[i].posts.length; j++) {
-                if (accounts[i].posts[j].type == 'L') {
-                    //console.log("here");
-                    //target acquired.
-                    //console.log("\t", accounts[i].posts[j].target.pubkey, ":", accounts[i].posts[j].target.index);
-                    if (accounts[i].posts[j].target.index == index && accounts[i].posts[j].target.pubkey == pubkey) {
-                        //Match
-                        //console.log("Found reply:", accounts[i].posts[j].body);
-                        res++;
-                    }
-                }
-            }
-        }
-        return res;
-    }
-    
-    getReportsForPost(accounts, pubkey, index) {
-        var res = 0;
-        for(let i = 0; i < accounts.length; i++) {
-            for(let j = 0; j < accounts[i].posts.length; j++) {
-                if (accounts[i].posts[j].type == 'X') {
-                    //console.log("here");
-                    //target acquired.
-                    //console.log("\t", accounts[i].posts[j].target.pubkey, ":", accounts[i].posts[j].target.index);
-                    if (accounts[i].posts[j].target.index == index && accounts[i].posts[j].target.pubkey == pubkey) {
-                        //Match
-                        //console.log("Found reply:", accounts[i].posts[j].body);
-                        res++;
-                    }
-                }
-            }
-        }
-        console.log("reports is ", res);
-        return res;
+    componentWillUnmount() {
+        //this.props.socket.off("send-posts");
     }
 
     render() {
         
         return (
-        <div className="post-grid d-flex align-items-center flex-wrap">
-            {this.state.postList.map((element, index, arr) => {
-                return (
-                    <div className="flex-container" key={index}>
-                        <PostAbbrev post={element} />
-                    </div>
-                );
-            })}
-        </div>
+            <div className="post-grid d-flex align-items-center flex-wrap">
+                {this.state.postList.map((element, index, arr) => {
+                    return (
+                        <div className="flex-container" key={index}>
+                            <Link to={{
+                                pathname: "/post/" + element.poster + "/" + element.index,
+                                state: {
+                                    selectedPost: element
+                                }
+                            }}>
+                                <PostAbbrev post={element} /></Link>
+                        </div>
+                    );
+                })}
+            </div>
         )
     }
 }
