@@ -9,4 +9,5 @@ A portable UI for the decentralized forum
     <li>npm install</li>
     <li>npm run build (root dir)</li>
     <li>npm run dev (OR) npm run start</li>
+    <li>npm run test</li>
 </ul>
