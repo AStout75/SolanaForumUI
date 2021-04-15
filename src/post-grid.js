@@ -20,7 +20,6 @@ class PostGrid extends React.Component {
                     if (accounts[i].posts[j].type != 'P') {
                         continue;
                     }
-                    console.log(accounts[i].posts[j].target);
                     var newPost = {
                         poster: accounts[i].pubkey, 
                         body: accounts[i].posts[j].body, 
@@ -30,6 +29,11 @@ class PostGrid extends React.Component {
                         likes: getLikesForPost(accounts, accounts[i].pubkey, j),
                         reports: getReportsForPost(accounts, accounts[i].pubkey, j)
                     };
+                    for (let k = 0; k < newPost.replies.length; k++) {
+                        let element = newPost.replies[k];
+                        element.likes = getLikesForPost(accounts, element.poster, element.index);
+                        element.reports = getReportsForPost(accounts, element.poster, element.index);
+                    }
                     console.log(newPost);
                     parsedPosts.push(newPost);
                 }
