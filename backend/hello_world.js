@@ -15,7 +15,8 @@
   const store1 = require('./util/store');
   const newAccountWithLamp = require('./util/new-account-with-lamports');
   const BaseConverter = require('base-x');
-const { relative } = require('path');
+//const { relative } = require('path');
+//const { create } = require('node:domain');
   const bs58 = BaseConverter("base-58");
   /**
    * Connection to the network
@@ -117,8 +118,9 @@ const { relative } = require('path');
   // Parses account data buffer into an array of post objects
   // Each object at least has a type field and a blank body
   function arrayOfPosts(d) {
-    let i = 2;
-    const postCount = d.readUInt16LE(0);
+    console.log(d.toString("hex"));
+    let i = 48;
+    const postCount = d.readUInt16LE(2);
     console.log("There are", postCount, "posts in this account.");
     let ret = [];
     // String.fromCharCode(uint8)
@@ -150,6 +152,7 @@ const { relative } = require('path');
         currentPost.target.index = d.readUInt16LE(i + 32);
         break;
       default:
+        console.log("Type: ", currentPost.type, "and  the rest", d.toString("hex"));
         throw "Could not parse post";
       }
       i += currentLength - 1;
@@ -244,6 +247,7 @@ const { relative } = require('path');
       greetedAccount = new web3.Account();
       // Create the greeted account
       console.log('Creating account', greetedAccount.publicKey.toBase58(), 'to say hello to');
+      //petitionAccount
       const space = greetedAccountDataLayout.span;
       const lamports = await connection.getMinimumBalanceForRentExemption(
         greetedAccountDataLayout.span,
@@ -336,6 +340,75 @@ const { relative } = require('path');
         preflightCommitment: 'singleGossip',
       },
     );
+  }
+
+  /* createPetitionForPost
+  Create a new account to store the data
+  Bundle the transaction data
+  */
+  
+  async function createPetitionForPost(targetPubkey, targetIndex) {
+    const petitionAccount = new web3.Account();
+    const accountSize = 100;
+
+    console.log("Creating new account");
+      //petitionAccount = new web3.Account();
+      // Create the greeted account
+      console.log('Creating PETITION ACCOUNT', petitionAccount.publicKey.toBase58(), ', is empty');
+
+      //const space = greetedAccountDataLayout.span;
+      const lamports = await connection.getMinimumBalanceForRentExemption(
+        accountSize,
+      );
+      const transaction = new web3.Transaction().add(
+        web3.SystemProgram.createAccount({
+          fromPubkey: payerAccount.publicKey,
+          newAccountPubkey: petitionAccount.publicKey,
+          lamports,
+          accountSize,
+          programId,
+        }),
+      );
+      await web3.sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payerAccount, petitionAccount],
+        {
+          commitment: 'singleGossip',
+          preflightCommitment: 'singleGossip',
+        },
+      );
+    
+    let meta = Buffer.alloc(1 + 2);
+    meta.writeUInt8("C".charCodeAt(0), 0);
+    meta.writeUInt16LE(parseInt(targetIndex), 1);
+
+    console.log("Length of petition:", meta.length);
+    console.log("Sent PETITION create with buffer:", meta.toString("hex"));
+    const instruction = new web3.TransactionInstruction({
+      keys: [
+        {pubkey: petitionAccount.publicKey, isSigner: true, isWritable: true},
+        {pubkey: targetPubkey, isSigner: false, isWritable: false}],
+      programId,
+      data: meta,
+    });
+    await web3.sendAndConfirmTransaction(
+      connection,
+      new web3.Transaction().add(instruction),
+      [payerAccount, petitionAccount],
+      {
+        commitment: 'singleGossip',
+        preflightCommitment: 'singleGossip',
+      },
+    );
+  }
+
+  /*
+
+  */
+
+  async function voteOnPetition(petitionPubkey, voterPubkey) {
+
   }
 
   async function reportPost(body, targetPubkey, targetIndex) {
@@ -501,5 +574,6 @@ const { relative } = require('path');
   exports.reportHellos = reportHellos;
   exports.bundleAllPosts = bundleAllPosts;
   exports.replyToPost = replyToPost;
+  exports.createPetitionForPost = createPetitionForPost;
   exports.reportPost = reportPost;
   exports.likePost = likePost;

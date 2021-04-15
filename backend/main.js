@@ -76,6 +76,9 @@ const { sleep } = require('./util/sleep');
         console.log("body:", report.body);
         console.log("pubkey:", pk.toBuffer().toString("hex"));
         console.log("index:", report.target.index);
+
+        console.log("also creating a petition");
+        hw1.createPetitionForPost(pk, report.target.index);
     });
 
       socket.on('like-post', like => {
