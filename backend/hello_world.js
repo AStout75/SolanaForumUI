@@ -126,12 +126,12 @@ const { sleep } = require('./util/sleep');
                    offendingPost: 0, reputationRequirement: 0, numSignatures: 0 };
     if(d.readUInt8(0) == 2) {
       result.type = "petition";
-      let i = 44;
-      result.numSignatures = d.readUInt16LE(42);
-      result.reputationRequirement = d.readUInt32LE(40);
-      result.offendingPost = { offender: readPubkey(d, 1), index: d.readUInt16LE(33) };
+      let i = 56;
+      result.numSignatures = d.readUInt16LE(52);
+      result.reputationRequirement = d.readUInt32LE(48);
+      result.offendingPost = { offender: readPubkey(d, 2), index: d.readUInt16LE(34) };
       for(let currSignature = 0; currSignature < result.numSignatures; currSignature++) {
-        signatures.push({ signer: readPubkey(d, i), vote: (d.readUInt8(i + 32) != 0) });
+        result.signatures.push({ signer: readPubkey(d, i), vote: (d.readUInt8(i + 32) != 0) });
         i += 33;
       }
     }
@@ -191,7 +191,7 @@ const { sleep } = require('./util/sleep');
    * Establish a connection to the cluster
    */
  async function establishConnection() {
-    connection = new web3.Connection('https://devnet.solana.com', 'singleGossip');
+    connection = new web3.Connection('http://localhost:8899', 'singleGossip');
     const version = await connection.getVersion();
     console.log('Connection to cluster established:', url1.url, version);
   }
