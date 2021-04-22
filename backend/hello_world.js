@@ -15,6 +15,7 @@
   const store1 = require('./util/store');
   const newAccountWithLamp = require('./util/new-account-with-lamports');
   const BaseConverter = require('base-x');
+const { sleep } = require('./util/sleep');
 //const { relative } = require('path');
 //const { create } = require('node:domain');
   const bs58 = BaseConverter("base-58");
@@ -118,55 +119,79 @@
   // Parses account data buffer into an array of post objects
   // Each object at least has a type field and a blank body
   function arrayOfPosts(d) {
+    // Check if this accout is a petition account
+    console.log("Parsing account data:");
     console.log(d.toString("hex"));
-    let i = 48;
-    const postCount = d.readUInt16LE(2);
-    console.log("There are", postCount, "posts in this account.");
-    let ret = [];
-    // String.fromCharCode(uint8)
-    for(let post = 0; post < postCount; post++) {
-      let currentPost = { type: "", body: "", target: "" };
-      let currentLength = d.readUInt16LE(i);
-      if(currentLength == 0)
-        throw "Invalid account data";
-      // Skip length
-      i += 2;
-      currentPost.type = String.fromCharCode(d.readUInt8(i));
-      // Skip type
-      i += 1;
-      switch(currentPost.type) {
-      case "P":
-        // Read body
-        currentPost.body = readPostBody(d, i, currentLength - 1);
-        break;
-      case "R":
-      case "X":
-        // Read ID
-        currentPost.target = { pubkey: readPubkey(d, i).toBase58(), index: 0 };
-        currentPost.target.index = d.readUInt16LE(i + 32);
-        currentPost.body = readPostBody(d, i + 34, currentLength - 35);
-        break;
-      case "L":
-        // Read ID
-        currentPost.target = { pubkey: readPubkey(d, i).toBase58(), index: 0 };
-        currentPost.target.index = d.readUInt16LE(i + 32);
-        break;
-      default:
-        console.log("Type: ", currentPost.type, "and  the rest", d.toString("hex"));
-        throw "Could not parse post";
+    let result = { type: "uninitialized", posts: [], signatures: [],
+                   offendingPost: 0, reputationRequirement: 0, numSignatures: 0 };
+    if(d.readUInt8(0) == 2) {
+      result.type = "petition";
+      let i = 46;
+      result.numSignatures = d.readUInt16LE(44);
+      result.reputationRequirement = d.readUint64LE(40);
+      result.offendingPost = { offender: readPubkey(d, 1), index: d.readUInt16LE(33) };
+      for(let currSignature = 0; currSignature < result.numSignatures; currSignature++) {
+        signatures.push({ signer: readPubkey(d, i), vote: (d.readUInt8(i + 32) != 0) });
+        i += 33;
       }
-      i += currentLength - 1;
-      ret.push(currentPost);
     }
-    // console.log("Account has used", i, "out of", d.length, "available bytes");
-    return ret;
+    else if(d.readUInt8(0) == 1) {
+      result.type = "user";
+      //console.log(d.toString("hex"));
+      let i = 48;
+      const postCount = d.readUInt16LE(2);
+      console.log("There are", postCount, "posts in this account.");
+      // String.fromCharCode(uint8)
+      for(let post = 0; post < postCount; post++) {
+        let currentPost = { type: "", body: "", target: "" };
+        let currentLength = d.readUInt16LE(i);
+        if(currentLength == 0)
+          throw "Invalid account data";
+        // Skip length
+        i += 2;
+        currentPost.type = String.fromCharCode(d.readUInt8(i));
+        // Skip type
+        i += 1;
+        switch(currentPost.type) {
+        case "P":
+          // Read body
+          currentPost.body = readPostBody(d, i, currentLength - 1);
+          break;
+        case "R":
+        case "X":
+          // Read ID
+          currentPost.target = { pubkey: readPubkey(d, i).toBase58(), index: 0 };
+          currentPost.target.index = d.readUInt16LE(i + 32);
+          currentPost.body = readPostBody(d, i + 34, currentLength - 35);
+          break;
+        case "L":
+          // Read ID
+          currentPost.target = { pubkey: readPubkey(d, i).toBase58(), index: 0 };
+          currentPost.target.index = d.readUInt16LE(i + 32);
+          break;
+        default:
+          console.log("Type: ", currentPost.type, "and  the rest", d.toString("hex"));
+          throw "Could not parse post";
+        }
+        i += currentLength - 1;
+        result.posts.push(currentPost);
+      }
+      // console.log("Account has used", i, "out of", d.length, "available bytes");
+    }
+    else if (d.readUInt8(0) == 0) {
+      // uninitialized account
+    }
+    else {
+      throw "INVALID ACCOUNT DATA";
+    }
+    return result;
   }
   
   /**
    * Establish a connection to the cluster
    */
  async function establishConnection() {
-    connection = new web3.Connection(/*'http://localhost:8899'*/url1.url, 'singleGossip');
+    connection = new web3.Connection('http://localhost:8899', 'singleGossip');
     const version = await connection.getVersion();
     console.log('Connection to cluster established:', url1.url, version);
   }
@@ -256,9 +281,9 @@
         web3.SystemProgram.createAccount({
           fromPubkey: payerAccount.publicKey,
           newAccountPubkey: greetedAccount.publicKey,
-          lamports,
-          space,
-          programId,
+          lamports: lamports,
+          space: space,
+          programId: programId,
         }),
       );
       await web3.sendAndConfirmTransaction(
@@ -364,9 +389,9 @@
         web3.SystemProgram.createAccount({
           fromPubkey: payerAccount.publicKey,
           newAccountPubkey: petitionAccount.publicKey,
-          lamports,
-          accountSize,
-          programId,
+          lamports: lamports,
+          space: accountSize,
+          programId: programId,
         }),
       );
       await web3.sendAndConfirmTransaction(
@@ -378,7 +403,7 @@
           preflightCommitment: 'singleGossip',
         },
       );
-    
+
     let meta = Buffer.alloc(1 + 2);
     meta.writeUInt8("C".charCodeAt(0), 0);
     meta.writeUInt16LE(parseInt(targetIndex), 1);
@@ -574,6 +599,7 @@
     let returnedArray = [];
     const accounts = await connection.getProgramAccounts(programId);
     for(let i = 0; i < accounts.length; i++) {
+      console.log("Getting posts for", accounts[i].pubkey.toBase58());
       returnedArray.push({ pubkey: accounts[i].pubkey.toBase58(), posts: await getArrayOfPosts(accounts[i].pubkey)});
     }
     return returnedArray;
@@ -583,6 +609,10 @@
     const accountInfo = await connection.getAccountInfo(pk);
     if (accountInfo === null) {
       throw 'Error: cannot get data for account ';
+    }
+    console.log(accountInfo.executable, accountInfo.lamports, accountInfo.owner.toBase58());
+    if(accountInfo.data) {
+      console.log("Data in this account!");
     }
     return arrayOfPosts(accountInfo.data);
   }
