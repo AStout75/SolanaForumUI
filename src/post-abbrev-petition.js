@@ -8,10 +8,14 @@ class PostAbbrevPetition extends React.Component {
     render() {
         return(
         <div className="post-petition">
-            Petition {this.props.index}
+            <h3>Petition {this.props.index}</h3>
+            <div>Category: Illegal content</div>
+            <div>Minimum reputation to vote: 7 (checkmark)</div>
+            <br></br>
+            <div>Progress: 6/10</div>
+            <button className="petition-button">Add vote to petition</button>
         </div>
         )
-        
     }
 }
 

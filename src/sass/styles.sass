@@ -88,7 +88,7 @@ nav
     text-align: center
     list-style: none
     margin: 0
-    padding: 0 0 0 5px
+    padding: 0 0 0 4px
     
     width: 100%
     color: white
@@ -211,17 +211,30 @@ nav
     block-overflow: ellipsis
     max-lines: 5
 
+.box-link:hover
+    @include transition
+    cursor: pointer
+
+
 .post-petition
     @include post-basics
+    position: relative
     background-color: crimson
     height: 300px
     block-overflow: ellipsis
     max-lines: 5
 
-.post-abbrev:hover
+.petition-button
     @include transition
-    cursor: pointer
-    box-shadow: 0px 0px 20px white
+    background: darken(crimson, 5)
+    color: white
+    border: 1px solid white
+    padding: 5px
+    position: absolute
+    bottom: 10px
+
+.petition-button:hover
+    background: darken(crimson, 10)
 
 .post-full-container
     width: 100%

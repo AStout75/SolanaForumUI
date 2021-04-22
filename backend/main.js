@@ -92,8 +92,9 @@ const { sleep } = require('./util/sleep');
     while(true) {
       // TODO this is kind of messy but idk how to do it
       // aside from polling like this
-      await sleep(500);
+      
       accountsBundle = await getAllPosts();
+      await sleep(50000000);
     }
   }
   
