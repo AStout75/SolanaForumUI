@@ -94,7 +94,7 @@ const { sleep } = require('./util/sleep');
       // aside from polling like this
       
       accountsBundle = await getAllPosts();
-      await sleep(50000000);
+      await sleep(1500);
     }
   }
   

@@ -128,7 +128,7 @@ const { sleep } = require('./util/sleep');
       result.type = "petition";
       let i = 46;
       result.numSignatures = d.readUInt16LE(44);
-      result.reputationRequirement = d.readUint64LE(40);
+      result.reputationRequirement = d.readBigUInt64LE(40);
       result.offendingPost = { offender: readPubkey(d, 1), index: d.readUInt16LE(33) };
       for(let currSignature = 0; currSignature < result.numSignatures; currSignature++) {
         signatures.push({ signer: readPubkey(d, i), vote: (d.readUInt8(i + 32) != 0) });
@@ -191,7 +191,7 @@ const { sleep } = require('./util/sleep');
    * Establish a connection to the cluster
    */
  async function establishConnection() {
-    connection = new web3.Connection('http://localhost:8899', 'singleGossip');
+    connection = new web3.Connection('https://devnet.solana.com', 'singleGossip');
     const version = await connection.getVersion();
     console.log('Connection to cluster established:', url1.url, version);
   }
@@ -600,7 +600,7 @@ const { sleep } = require('./util/sleep');
     const accounts = await connection.getProgramAccounts(programId);
     for(let i = 0; i < accounts.length; i++) {
       console.log("Getting posts for", accounts[i].pubkey.toBase58());
-      returnedArray.push({ pubkey: accounts[i].pubkey.toBase58(), posts: await getArrayOfPosts(accounts[i].pubkey)});
+      returnedArray.push({ pubkey: accounts[i].pubkey.toBase58(), data: await getArrayOfPosts(accounts[i].pubkey)});
     }
     return returnedArray;
   }
