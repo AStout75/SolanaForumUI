@@ -385,10 +385,11 @@
 
     console.log("Length of petition:", meta.length);
     console.log("Sent PETITION create with buffer:", meta.toString("hex"));
+    
     const instruction = new web3.TransactionInstruction({
       keys: [
         {pubkey: petitionAccount.publicKey, isSigner: true, isWritable: true},
-        {pubkey: targetPubkey, isSigner: false, isWritable: false}],
+        {pubkey: targetPubkey, isSigner: false, isWritable: true}],
       programId,
       data: meta,
     });
@@ -408,7 +409,28 @@
   */
 
   async function voteOnPetition(petitionPubkey, voterPubkey) {
+    let meta = Buffer.alloc(1 + 2);
+    meta.writeUInt8("V".charCodeAt(0), 0);
+    meta.writeUInt16LE(parseInt(targetIndex), 1);
 
+    console.log("Length of petition:", meta.length);
+    console.log("Sent PETITION create with buffer:", meta.toString("hex"));
+    const instruction = new web3.TransactionInstruction({
+      keys: [
+        {pubkey: voterPubkey, isSigner: true, isWritable: true},
+        {pubkey: petitionPubkey, isSigner: false, isWritable: false}],
+      programId,
+      data: meta,
+    });
+    await web3.sendAndConfirmTransaction(
+      connection,
+      new web3.Transaction().add(instruction),
+      [payerAccount, petitionAccount],
+      {
+        commitment: 'singleGossip',
+        preflightCommitment: 'singleGossip',
+      },
+    );
   }
 
   async function reportPost(body, targetPubkey, targetIndex) {

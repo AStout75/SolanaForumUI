@@ -83,10 +83,137 @@ nav
 
 .post-grid
     margin-bottom: 5px
+
+.post-tabs
+    text-align: center
+    list-style: none
+    margin: 0
+    padding: 0 0 0 5px
+    
+    width: 100%
+    color: white
+    position: relative
+    overflow: hidden
+
+.post-tabs li.selected
+    z-index: 2
+    //border-bottom-color: #fff
+
+.post-tabs li.selected.post-tab-main
+    background: $primary-color
+    color: white
+    border-bottom-color: $primary-color
+
+.post-tabs li.selected.post-tab-petition
+    background: crimson
+    color: white
+    border-bottom-color: crimson
+
+//.post-tabs li.selected:before
+//    box-shadow: 2px 2px 0 #fff
+
+.post-tabs li.selected.post-tab-main:before
+    box-shadow: 2px 2px 0 $primary-color
+
+.post-tabs li.selected.post-tab-petition:before
+    box-shadow: 2px 2px 0 crimson
+
+//.post-tabs li.selected:after
+//    box-shadow: -2px 2px 0 #fff
+
+.post-tabs li.selected.post-tab-main:after
+    box-shadow: -2px 2px 0 $primary-color
+
+.post-tabs li.selected.post-tab-petition:after
+    box-shadow: -2px 2px 0 crimson
+
+.post-tabs:before
+    z-index: 1
+
+.post-tabs:after
+    position: absolute
+    content: ""
+    width: 100%
+    bottom: 0
+    left: 0
+    border-bottom: 1px solid white
+    z-index: 1
+
+.post-tabs li:before, .post-tabs li:after
+    position: absolute
+    bottom: -1px
+    width: 6px
+    height: 6px
+    content: " "
+    border: 1px solid white
+
+.post-tabs li:before
+    left: -6px
+    border-bottom-right-radius: 6px
+    border-width: 0 1px 1px 0
+    //box-shadow: 2px 2px 0 #ececec
+
+.post-tabs li:after
+    right: -6px
+    border-bottom-left-radius: 6px
+    border-width: 0 0 1px 1px
+    //box-shadow: -2px 2px 0 #ececec
+
+.post-tabs li.post-tab-main:before
+    box-shadow: 2px 2px 0 $primary-color
+    border-width: 0 1px 1px 0
+
+.post-tabs li.post-tab-main:after
+    box-shadow: -2px 2px 0 $primary-color
+    border-width: 0 0 1px 1px
+
+.post-tabs li.post-tab-petition:before
+    box-shadow: 2px 2px 0 crimson
+    border-width: 0 1px 1px 0
+
+.post-tabs li.post-tab-petition:after
+    box-shadow: -2px 2px 0 crimson
+    border-width: 0 0 1px 1px
+
+.post-tabs li
+    position: relative
+    z-index: 0
+
+    margin: 0 10px
+    padding: 0 10px
+    border: 1px solid white
+    display: inline-block
+
+    border-top-left-radius: 6px
+    border-top-right-radius: 6px
+
+    //background: linear-gradient(to bottom, #ececec 50%, #d1d1d1 100%)
+    //box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4), inset 0 1px 0 #fff
+    text-shadow: 0 1px #fff
+    margin: 0 -5px
+    padding: 0 20px
+
+    white-space: nowrap
+
+.post-tabs li:hover
+    cursor: pointer
+
+.post-tab-main
+    background-color: $primary-color
+
+.post-tab-petition
+    background-color: crimson
         
 .post-abbrev
     @include post-basics
     position: relative
+    height: 300px
+    block-overflow: ellipsis
+    max-lines: 5
+
+.post-petition
+    @include post-basics
+    background-color: crimson
     height: 300px
     block-overflow: ellipsis
     max-lines: 5

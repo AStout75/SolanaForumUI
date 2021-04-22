@@ -1,5 +1,3 @@
-import {Link} from "react-router-dom";
-
 import PostAbbrev from "./post-abbrev";
 import SocketContext from "./socket-context";
 import {getRepliesToPost, getLikesForPost, getReportsForPost} from "./data-util/parse";
@@ -55,13 +53,8 @@ class PostGrid extends React.Component {
                 {this.state.postList.map((element, index, arr) => {
                     return (
                         <div className="flex-container" key={index}>
-                            <Link to={{
-                                pathname: "/post/" + element.poster + "/" + element.index,
-                                state: {
-                                    selectedPost: element
-                                }
-                            }}>
-                                <PostAbbrev post={element} /></Link>
+                            
+                                <PostAbbrev post={element} />
                         </div>
                     );
                 })}
