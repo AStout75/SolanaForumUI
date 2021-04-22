@@ -36,8 +36,11 @@ class PostAbbrev extends React.Component {
         if (this.state.tab == "post") {
             this.content = <PostAbbrevContent post={this.props.post} />
         }
-        else {
-            this.content = <PostAbbrevPetition post={this.props.post} index={0} />
+        else if (this.state.tab.substring(0, "petition".length) == "petition") {
+            console.log("petition".length);
+            var idx = this.state.tab.substring("petition".length, this.state.tab.length);
+            console.log("petitions is", this.props.post.petitions, "and we want the index", idx);
+            this.content = <PostAbbrevPetition petition={this.props.post.petitions[parseInt(idx) - 1]} index={idx} />
         }
         return (
         <div>

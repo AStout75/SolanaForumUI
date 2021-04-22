@@ -88,6 +88,16 @@ export function getPetitionsForPost(accounts, pubkey, index) {
     //console.log("Looking for replies to", pubkey, ":", index);
     var res = [];
     for(let i = 0; i < accounts.length; i++) {
+        if (accounts[i].data.type == 'petition') {
+            if (accounts[i].data.offendingPost.index == index && accounts[i].data.offendingPost.offender == pubkey) {
+                res.push({
+                    reputationRequirement: accounts[i].data.reputationRequirement,
+                    signatures: accounts[i].data.signatures,
+                })
+            }
+        }
+
+        /* unneeded (?)
         for(let j = 0; j < accounts[i].data.posts.length; j++) {
             if (accounts[i].data.posts[j].type == 'C') {
                 if (accounts[i].data.posts[j].target.index == index && accounts[i].data.posts[j].target.pubkey == pubkey) {
@@ -100,7 +110,7 @@ export function getPetitionsForPost(accounts, pubkey, index) {
                     });
                 }
             }
-        }
+        } */
     }
     return res;
 }

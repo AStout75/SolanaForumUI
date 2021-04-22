@@ -6,6 +6,7 @@ class PostAbbrevPetition extends React.Component {
     }
     
     render() {
+        console.log("Petition: ", this.props.petition);
         return(
         <div className="post-petition">
             <h3>Petition {this.props.index}</h3>
