@@ -129,7 +129,7 @@ const { sleep } = require('./util/sleep');
       let i = 56;
       result.numSignatures = d.readUInt16LE(52);
       result.reputationRequirement = d.readUInt32LE(48);
-      result.offendingPost = { offender: readPubkey(d, 2), index: d.readUInt16LE(34) };
+      result.offendingPost = { offender: readPubkey(d, 2).toBase58(), index: d.readUInt16LE(34) };
       for(let currSignature = 0; currSignature < result.numSignatures; currSignature++) {
         result.signatures.push({ signer: readPubkey(d, i), vote: (d.readUInt8(i + 32) != 0) });
         i += 33;
@@ -191,7 +191,7 @@ const { sleep } = require('./util/sleep');
    * Establish a connection to the cluster
    */
  async function establishConnection() {
-    connection = new web3.Connection('http://localhost:8899', 'singleGossip');
+    connection = new web3.Connection(/* 'http://localhost:8899' */'https://devnet.solana.com', 'singleGossip');
     const version = await connection.getVersion();
     console.log('Connection to cluster established:', url1.url, version);
   }
@@ -433,24 +433,26 @@ const { sleep } = require('./util/sleep');
 
   */
 
-  async function voteOnPetition(petitionPubkey, voterPubkey) {
-    let meta = Buffer.alloc(1 + 2);
+  async function voteOnPetition(petitionPubkey, vote) {
+    let meta = Buffer.alloc(1 + 1);
     meta.writeUInt8("V".charCodeAt(0), 0);
-    meta.writeUInt16LE(parseInt(targetIndex), 1);
+    meta.writeUInt8LE(vote, 1);
+    
 
     console.log("Length of petition:", meta.length);
     console.log("Sent PETITION create with buffer:", meta.toString("hex"));
     const instruction = new web3.TransactionInstruction({
       keys: [
-        {pubkey: voterPubkey, isSigner: true, isWritable: true},
-        {pubkey: petitionPubkey, isSigner: false, isWritable: false}],
+        {pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true},
+        {pubkey: petitionPubkey, isSigner: false, isWritable: true}
+      ],
       programId,
       data: meta,
     });
     await web3.sendAndConfirmTransaction(
       connection,
       new web3.Transaction().add(instruction),
-      [payerAccount, petitionAccount],
+      [payerAccount, greetedAccount.publicKey],
       {
         commitment: 'singleGossip',
         preflightCommitment: 'singleGossip',
@@ -627,5 +629,6 @@ const { sleep } = require('./util/sleep');
   exports.bundleAllPosts = bundleAllPosts;
   exports.replyToPost = replyToPost;
   exports.createPetitionForPost = createPetitionForPost;
+  exports.voteOnPetition = voteOnPetition;
   exports.reportPost = reportPost;
   exports.likePost = likePost;

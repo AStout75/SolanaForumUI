@@ -72,13 +72,19 @@ const { sleep } = require('./util/sleep');
         
         let pk = new PublicKey(report.target.pubkey);
         console.log("Recieved report for post", pk.toBase58(), ":", report.target.index);
-        hw1.reportPost(report.body, pk, report.target.index);
+        //hw1.reportPost(report.body, pk, report.target.index);
         console.log("body:", report.body);
         console.log("pubkey:", pk.toBuffer().toString("hex"));
         console.log("index:", report.target.index);
 
         console.log("also creating a petition");
         hw1.createPetitionForPost(pk, report.target.index);
+    });
+
+    socket.on('vote-petition', petition => {
+        let pk = new PublicKey(petition.pubkey);
+        console.log("vote petition func, pk is", pk);
+        hw1.voteOnPetition(pk, 1); //test vote yes for now
     });
 
       socket.on('like-post', like => {

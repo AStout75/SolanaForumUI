@@ -85,14 +85,15 @@ export function getReportsForPost(accounts, pubkey, index) {
 */
 
 export function getPetitionsForPost(accounts, pubkey, index) {
-    //console.log("Looking for replies to", pubkey, ":", index);
+    console.log("Motherfucker", accounts);
     var res = [];
     for(let i = 0; i < accounts.length; i++) {
         if (accounts[i].data.type == 'petition') {
             if (accounts[i].data.offendingPost.index == index && accounts[i].data.offendingPost.offender == pubkey) {
                 res.push({
+                    pubkey: accounts[i].pubkey,
                     reputationRequirement: accounts[i].data.reputationRequirement,
-                    signatures: accounts[i].data.signatures,
+                    numSignatures: accounts[i].data.numSignatures,
                 })
             }
         }

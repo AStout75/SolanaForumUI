@@ -10,11 +10,12 @@ class PostAbbrevPetition extends React.Component {
         return(
         <div className="post-petition">
             <h3>Petition {this.props.index}</h3>
-            <div>Category: Illegal content</div>
-            <div>Minimum reputation to vote: 7 (checkmark)</div>
+            <div>Minimum reputation to vote: {this.props.petition.reputationRequirement}</div>
             <br></br>
-            <div>Progress: 6/10</div>
-            <button className="petition-button">Add vote to petition</button>
+            <div>Progress: {this.props.petition.numSignatures}/10</div>
+            <button 
+            className="petition-button"
+            onClick={() => {socket.emit('vote-petition', this.props.petition)}}>Add vote to petition</button>
         </div>
         )
     }

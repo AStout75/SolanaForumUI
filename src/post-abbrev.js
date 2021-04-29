@@ -49,18 +49,15 @@ class PostAbbrev extends React.Component {
                     onClick={() => this.setState({tab: "post"})}>
                     Post Content
                 </li>
-                <li className={"post-tab-petition" + (this.state.tab == "petition1" ? " selected" : "")}
-                    onClick={() => this.setState({tab: "petition1"})}>
-                    Petition 1
-                </li>
-                <li className={"post-tab-petition" + (this.state.tab == "petition2" ? " selected" : "")}
-                    onClick={() => this.setState({tab: "petition2"})}>
-                    Petition 2
-                </li>
-                <li className={"post-tab-petition" + (this.state.tab == "petition3" ? " selected" : "")}
-                    onClick={() => this.setState({tab: "petition3"})}>
-                    Petition 3
-                </li>
+                {this.props.post.petitions.map((element, index, arr) => {
+                    return (
+                        <li key={index} className={"post-tab-petition" + (this.state.tab == ("petition" + (index + 1)) ? " selected" : "")}
+                            onClick={() => this.setState({tab: "petition" + (index + 1)})}>
+                            Petition {index + 1}
+                        </li>
+                    );
+                    })
+                }
             </ul>
 
             {this.content}
