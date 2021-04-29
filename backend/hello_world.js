@@ -374,7 +374,7 @@ const { sleep } = require('./util/sleep');
   
   async function createPetitionForPost(targetPubkey, targetIndex) {
     const petitionAccount = new web3.Account();
-    const accountSize = 100;
+    const accountSize = 1000;
 
     console.log("Creating new account");
       //petitionAccount = new web3.Account();
@@ -436,11 +436,11 @@ const { sleep } = require('./util/sleep');
   async function voteOnPetition(petitionPubkey, vote) {
     let meta = Buffer.alloc(1 + 1);
     meta.writeUInt8("V".charCodeAt(0), 0);
-    meta.writeUInt8LE(vote, 1);
+    meta.writeUInt8(vote, 1);
     
 
-    console.log("Length of petition:", meta.length);
-    console.log("Sent PETITION create with buffer:", meta.toString("hex"));
+    //console.log("Length of petition:", meta.length);
+    //console.log("Sent PETITION create with buffer:", meta.toString("hex"));
     const instruction = new web3.TransactionInstruction({
       keys: [
         {pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true},
@@ -449,10 +449,11 @@ const { sleep } = require('./util/sleep');
       programId,
       data: meta,
     });
+    console.log("awaiting transaction");
     await web3.sendAndConfirmTransaction(
       connection,
       new web3.Transaction().add(instruction),
-      [payerAccount, greetedAccount.publicKey],
+      [payerAccount, greetedAccount],
       {
         commitment: 'singleGossip',
         preflightCommitment: 'singleGossip',

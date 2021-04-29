@@ -1,6 +1,7 @@
-$primary-color: royalblue
+$primary-color: royalblue//#7290E9
 $secondary-color: white
-$tertiary-color: slategray
+$danger-color: #F05675//#15B097
+
 
 $nav-font-size: 30px
 $breakpoint-2: 700px
@@ -17,20 +18,20 @@ body
 @mixin icon
     width: $nav-font-size * 1.4
     height: $nav-font-size * 1.4
-    background-color: $secondary-color
+    background-color: $primary-color
     i
-        color: $primary-color
+        color: $secondary-color
         font-size: $nav-font-size * 0.85
-    i:hover
-        color: darken($primary-color, 15)
+    //i:hover
+        //background-color: darken($secondary-color, 10)
 
 @mixin post-basics
     @include transition
     position: relative
     padding: 10px
     width: 100%
-    background-color: $primary-color
-    color: $secondary-color
+    background-color: $secondary-color
+    color: black
     overflow: hidden
 
 a
@@ -42,7 +43,7 @@ a:hover
     text-decoration: inherit
 
 nav
-    background-color: darken($primary-color, 15)
+    background-color: darken($primary-color, 10)
     padding: 10px 0 10px 15px
     span
         display: inline-block
@@ -59,8 +60,9 @@ nav
 .icon:hover
     box-shadow: 0px 0px 0px white
     cursor: pointer
-    i
-        color: darken($primary-color, 15)
+    background-color: darken($primary-color, 10)
+    //i
+        //color: darken($primary-color, 10)
 
 .flex-container
     width: 24.6%
@@ -105,9 +107,9 @@ nav
     border-bottom-color: $primary-color
 
 .post-tabs li.selected.post-tab-petition
-    background: crimson
+    background: $danger-color
     color: white
-    border-bottom-color: crimson
+    border-bottom-color: $danger-color
 
 //.post-tabs li.selected:before
 //    box-shadow: 2px 2px 0 #fff
@@ -116,7 +118,7 @@ nav
     box-shadow: 2px 2px 0 $primary-color
 
 .post-tabs li.selected.post-tab-petition:before
-    box-shadow: 2px 2px 0 crimson
+    box-shadow: 2px 2px 0 $danger-color
 
 //.post-tabs li.selected:after
 //    box-shadow: -2px 2px 0 #fff
@@ -125,7 +127,7 @@ nav
     box-shadow: -2px 2px 0 $primary-color
 
 .post-tabs li.selected.post-tab-petition:after
-    box-shadow: -2px 2px 0 crimson
+    box-shadow: -2px 2px 0 $danger-color
 
 .post-tabs:before
     z-index: 1
@@ -168,11 +170,11 @@ nav
     border-width: 0 0 1px 1px
 
 .post-tabs li.post-tab-petition:before
-    box-shadow: 2px 2px 0 crimson
+    box-shadow: 2px 2px 0 $danger-color
     border-width: 0 1px 1px 0
 
 .post-tabs li.post-tab-petition:after
-    box-shadow: -2px 2px 0 crimson
+    box-shadow: -2px 2px 0 $danger-color
     border-width: 0 0 1px 1px
 
 .post-tabs li
@@ -202,7 +204,12 @@ nav
     background-color: $primary-color
 
 .post-tab-petition
-    background-color: crimson
+    background-color: $danger-color
+
+.bg-post
+    background: $primary-color
+.bg-petition
+    background: $danger-color
         
 .post-abbrev
     @include post-basics
@@ -215,26 +222,38 @@ nav
     @include transition
     cursor: pointer
 
-
 .post-petition
     @include post-basics
     position: relative
-    background-color: crimson
     height: 300px
     block-overflow: ellipsis
     max-lines: 5
 
-.petition-button
-    @include transition
-    background: darken(crimson, 5)
-    color: white
-    border: 1px solid white
-    padding: 5px
+.petition-buttons
     position: absolute
     bottom: 10px
+    width: calc(100% - 40px)
+    margin: 10px
 
-.petition-button:hover
-    background: darken(crimson, 10)
+@mixin petition-button
+    @include transition
+    color: white
+    border: 1px solid white
+    padding: 8px
+
+.petition-button-keep
+    @include petition-button
+    background: $primary-color
+
+.petition-button-keep:hover
+    background: darken($primary-color, 10)
+    
+.petition-button-remove
+    @include petition-button
+    background: $danger-color
+
+.petition-button-remove:hover
+    background: darken($danger-color, 10)
 
 .post-full-container
     width: 100%
@@ -248,9 +267,6 @@ nav
     @include post-basics
     min-height: 150px
     margin-top: 5px
-
-.post-reported
-    background-color: crimson
     
 .post-icons
     position: absolute
@@ -268,7 +284,7 @@ footer
     padding: 10px
     height: 60px
     width: 100%
-    background-color: darken($primary-color, 15)
+    background-color: darken($primary-color, 10)
 
 
     

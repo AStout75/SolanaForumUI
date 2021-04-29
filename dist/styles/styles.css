@@ -14,7 +14,7 @@ a:hover {
 }
 
 nav {
-  background-color: #1d44b8;
+  background-color: #214cce;
   padding: 10px 0 10px 15px;
 }
 nav span {
@@ -27,15 +27,12 @@ nav span {
   transition: 0.3s all;
   width: 42px;
   height: 42px;
-  background-color: white;
+  background-color: royalblue;
   margin-right: 10px;
 }
 .icon i {
-  color: royalblue;
+  color: white;
   font-size: 25.5px;
-}
-.icon i:hover {
-  color: #1d44b8;
 }
 .icon i {
   transition: 0.3s all;
@@ -44,9 +41,7 @@ nav span {
 .icon:hover {
   box-shadow: 0px 0px 0px white;
   cursor: pointer;
-}
-.icon:hover i {
-  color: #1d44b8;
+  background-color: #214cce;
 }
 
 .flex-container {
@@ -98,9 +93,9 @@ nav span {
 }
 
 .post-tabs li.selected.post-tab-petition {
-  background: crimson;
+  background: #F05675;
   color: white;
-  border-bottom-color: crimson;
+  border-bottom-color: #F05675;
 }
 
 .post-tabs li.selected.post-tab-main:before {
@@ -108,7 +103,7 @@ nav span {
 }
 
 .post-tabs li.selected.post-tab-petition:before {
-  box-shadow: 2px 2px 0 crimson;
+  box-shadow: 2px 2px 0 #F05675;
 }
 
 .post-tabs li.selected.post-tab-main:after {
@@ -116,7 +111,7 @@ nav span {
 }
 
 .post-tabs li.selected.post-tab-petition:after {
-  box-shadow: -2px 2px 0 crimson;
+  box-shadow: -2px 2px 0 #F05675;
 }
 
 .post-tabs:before {
@@ -165,12 +160,12 @@ nav span {
 }
 
 .post-tabs li.post-tab-petition:before {
-  box-shadow: 2px 2px 0 crimson;
+  box-shadow: 2px 2px 0 #F05675;
   border-width: 0 1px 1px 0;
 }
 
 .post-tabs li.post-tab-petition:after {
-  box-shadow: -2px 2px 0 crimson;
+  box-shadow: -2px 2px 0 #F05675;
   border-width: 0 0 1px 1px;
 }
 
@@ -198,7 +193,15 @@ nav span {
 }
 
 .post-tab-petition {
-  background-color: crimson;
+  background-color: #F05675;
+}
+
+.bg-post {
+  background: royalblue;
+}
+
+.bg-petition {
+  background: #F05675;
 }
 
 .post-abbrev {
@@ -206,8 +209,8 @@ nav span {
   position: relative;
   padding: 10px;
   width: 100%;
-  background-color: royalblue;
-  color: white;
+  background-color: white;
+  color: black;
   overflow: hidden;
   position: relative;
   height: 300px;
@@ -225,28 +228,44 @@ nav span {
   position: relative;
   padding: 10px;
   width: 100%;
-  background-color: royalblue;
-  color: white;
+  background-color: white;
+  color: black;
   overflow: hidden;
   position: relative;
-  background-color: crimson;
   height: 300px;
   block-overflow: ellipsis;
   max-lines: 5;
 }
 
-.petition-button {
-  transition: 0.3s all;
-  background: #c51236;
-  color: white;
-  border: 1px solid white;
-  padding: 5px;
+.petition-buttons {
   position: absolute;
   bottom: 10px;
+  width: calc(100% - 40px);
+  margin: 10px;
 }
 
-.petition-button:hover {
-  background: #ad102f;
+.petition-button-keep {
+  transition: 0.3s all;
+  color: white;
+  border: 1px solid white;
+  padding: 8px;
+  background: royalblue;
+}
+
+.petition-button-keep:hover {
+  background: #214cce;
+}
+
+.petition-button-remove {
+  transition: 0.3s all;
+  color: white;
+  border: 1px solid white;
+  padding: 8px;
+  background: #F05675;
+}
+
+.petition-button-remove:hover {
+  background: #ec274f;
 }
 
 .post-full-container {
@@ -259,8 +278,8 @@ nav span {
   position: relative;
   padding: 10px;
   width: 100%;
-  background-color: royalblue;
-  color: white;
+  background-color: white;
+  color: black;
   overflow: hidden;
   min-height: 150px;
 }
@@ -270,15 +289,11 @@ nav span {
   position: relative;
   padding: 10px;
   width: 100%;
-  background-color: royalblue;
-  color: white;
+  background-color: white;
+  color: black;
   overflow: hidden;
   min-height: 150px;
   margin-top: 5px;
-}
-
-.post-reported {
-  background-color: crimson;
 }
 
 .post-icons {
@@ -300,7 +315,7 @@ footer {
   padding: 10px;
   height: 60px;
   width: 100%;
-  background-color: #1d44b8;
+  background-color: #214cce;
 }
 
 /*.help-button

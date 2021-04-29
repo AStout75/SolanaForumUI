@@ -59,8 +59,8 @@ class PostAbbrev extends React.Component {
                     })
                 }
             </ul>
-
             {this.content}
+            
             
         </div>
         )

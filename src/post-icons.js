@@ -26,7 +26,7 @@ class PostIcons extends React.Component {
                 this.props.socket.emit('reply-post', reply);
             }}
                 className="icon rounded-circle d-flex align-items-center justify-content-center">
-                <i className="fas fa-pencil-alt fa-sm"></i>
+                <i className="fas fa-reply fa-sm"></i>
             </div>
             <div className="icon rounded-circle d-flex align-items-center justify-content-center">
             <a href={'https://explorer.solana.com/address/' + this.props.post.poster + '?cluster=devnet'} target="_blank" ><i className="fas fa-info fa-sm"></i></a>
