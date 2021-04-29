@@ -85,6 +85,10 @@ const { sleep } = require('./util/sleep');
         let pk = new PublicKey(petition.pubkey);
         console.log("vote petition func, pk is", pk);
         hw1.voteOnPetition(pk, 1); //test vote yes for now
+        //if done //RACE condition?
+        if (petition.numSignatures == petition.signatureCapacity - 1) {
+          hw1.finalizePetitionOutcome(petition.pubkey, petition.offendingPubkey, petition.signatures);
+        }
     });
 
       socket.on('like-post', like => {

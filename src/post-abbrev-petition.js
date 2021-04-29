@@ -13,7 +13,7 @@ class PostAbbrevPetition extends React.Component {
                 <h3>Petition {this.props.index}</h3>
                 <div>Minimum reputation to vote: {this.props.petition.reputationRequirement}</div>
                 <br></br>
-                <div>Progress: {this.props.petition.numSignatures}/10</div>
+                <div>Progress: {this.props.petition.numSignatures}/{this.props.petition.signatureCapacity}</div>
                 <div className="petition-buttons d-flex justify-content-between">
                     <button 
                     className="petition-button-remove"
@@ -24,7 +24,6 @@ class PostAbbrevPetition extends React.Component {
                     onClick={() => {this.props.socket.emit('vote-petition', this.props.petition, 0)}}>
                         Vote to <b>keep</b> post</button>
                 </div>
-                
             </div>
         </div>
         

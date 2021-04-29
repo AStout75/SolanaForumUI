@@ -116,12 +116,16 @@ const { sleep } = require('./util/sleep');
     return returned;
   }
 
+  function signatureCapacity(length) {
+    return Math.floor((length - 56) / 33)
+  } 
+
   // Parses account data buffer into an array of post objects
   // Each object at least has a type field and a blank body
   function arrayOfPosts(d) {
     // Check if this accout is a petition account
-    console.log("Parsing account data:");
-    console.log(d.toString("hex"));
+    //console.log("Parsing account data:");
+    //console.log(d.toString("hex"));
     let result = { type: "uninitialized", posts: [], signatures: [],
                    offendingPost: 0, reputationRequirement: 0, numSignatures: 0 };
     if(d.readUInt8(0) == 2) {
@@ -130,6 +134,7 @@ const { sleep } = require('./util/sleep');
       result.numSignatures = d.readUInt16LE(52);
       result.reputationRequirement = d.readUInt32LE(48);
       result.offendingPost = { offender: readPubkey(d, 2).toBase58(), index: d.readUInt16LE(34) };
+      result.signatureCapacity = signatureCapacity(d.length);
       for(let currSignature = 0; currSignature < result.numSignatures; currSignature++) {
         result.signatures.push({ signer: readPubkey(d, i), vote: (d.readUInt8(i + 32) != 0) });
         i += 33;
@@ -202,6 +207,7 @@ const { sleep } = require('./util/sleep');
    async function establishPayer() {
     if (!payerAccount) {
       let fees = 0;
+      fees += await connection.getMinimumBalanceForRentExemption(2000);
       const {feeCalculator} = await connection.getRecentBlockhash();
   
       // Calculate the cost to load the program
@@ -374,7 +380,7 @@ const { sleep } = require('./util/sleep');
   
   async function createPetitionForPost(targetPubkey, targetIndex) {
     const petitionAccount = new web3.Account();
-    const accountSize = 1000;
+    const accountSize = 89;
 
     console.log("Creating new account");
       //petitionAccount = new web3.Account();
@@ -383,7 +389,7 @@ const { sleep } = require('./util/sleep');
 
       //const space = greetedAccountDataLayout.span;
       const lamports = await connection.getMinimumBalanceForRentExemption(
-        accountSize,
+        1000,
       );
       const transaction = new web3.Transaction().add(
         web3.SystemProgram.createAccount({
@@ -454,6 +460,38 @@ const { sleep } = require('./util/sleep');
       connection,
       new web3.Transaction().add(instruction),
       [payerAccount, greetedAccount],
+      {
+        commitment: 'singleGossip',
+        preflightCommitment: 'singleGossip',
+      },
+    );
+
+
+  }
+
+  async function finalizePetitionOutcome(petitionPubkey, offenderPubkey, signers) {
+    let meta = Buffer.alloc(1);
+    meta.writeUInt8("F".charCodeAt(0), 0);
+
+    var keys = [{pubkey: petitionPubkey.publicKey, isSigner: false, isWritable: true},
+    {pubkey: offenderPubkey, isSigner: false, isWritable: true}];
+
+    for (var i = 0; i < signers.length; i++) {
+      keys.push({pubkey: signers[i], isSigner: false, isWritable: true});
+    }
+
+    const instruction = new web3.TransactionInstruction({
+      keys: [
+        keys
+      ],
+      programId,
+      data: meta,
+    });
+    console.log("awaiting transaction");
+    await web3.sendAndConfirmTransaction(
+      connection,
+      new web3.Transaction().add(instruction),
+      [payerAccount],
       {
         commitment: 'singleGossip',
         preflightCommitment: 'singleGossip',

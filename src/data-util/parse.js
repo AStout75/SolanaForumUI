@@ -94,6 +94,9 @@ export function getPetitionsForPost(accounts, pubkey, index) {
                     pubkey: accounts[i].pubkey,
                     reputationRequirement: accounts[i].data.reputationRequirement,
                     numSignatures: accounts[i].data.numSignatures,
+                    signatureCapacity: accounts[i].data.signatureCapacity,
+                    signatures: accounts[i].data.signatures,
+                    offendingPubkey: accounts[i].data.offendingPost.offender,
                 })
             }
         }
