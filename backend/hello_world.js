@@ -105,6 +105,7 @@ const { sleep } = require('./util/sleep');
       returned[i] = d.readUInt8(i + index);
     }
     return new web3.PublicKey(returned);
+
   }
 
   function readPostBody(d, index, length) {
@@ -136,9 +137,10 @@ const { sleep } = require('./util/sleep');
       result.offendingPost = { offender: readPubkey(d, 2).toBase58(), index: d.readUInt16LE(34) };
       result.signatureCapacity = signatureCapacity(d.length);
       for(let currSignature = 0; currSignature < result.numSignatures; currSignature++) {
-        result.signatures.push({ signer: readPubkey(d, i), vote: (d.readUInt8(i + 32) != 0) });
+        result.signatures.push({ signer: readPubkey(d, i).toBase58(), vote: (d.readUInt8(i + 32) != 0) });
         i += 33;
       }
+      //console.log("\n\n\n HERE\n", result.signatures);
     }
     else if(d.readUInt8(0) == 1) {
       result.type = "user";
@@ -327,6 +329,7 @@ const { sleep } = require('./util/sleep');
     //const post = Buffer.from('Ptest\0');
     let post = Buffer.from('P' + body);
     console.log("Length of post:", post.length);
+    console.log(post.toString("hex"));
     const instruction = new web3.TransactionInstruction({
       keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
       programId,
@@ -447,6 +450,9 @@ const { sleep } = require('./util/sleep');
 
     //console.log("Length of petition:", meta.length);
     //console.log("Sent PETITION create with buffer:", meta.toString("hex"));
+    console.log("the gold standard\n\n\n", petitionPubkey);
+    console.log({pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true},
+      {pubkey: petitionPubkey, isSigner: false, isWritable: true});
     const instruction = new web3.TransactionInstruction({
       keys: [
         {pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true},
@@ -473,21 +479,54 @@ const { sleep } = require('./util/sleep');
     let meta = Buffer.alloc(1);
     meta.writeUInt8("F".charCodeAt(0), 0);
 
-    var keys = [{pubkey: petitionPubkey.publicKey, isSigner: false, isWritable: true},
+    var keys = [{pubkey: petitionPubkey, isSigner: false, isWritable: true},
     {pubkey: offenderPubkey, isSigner: false, isWritable: true}];
-
+      console.log("SIGNERS", signers);
+      console.log("el 1", signers[0].signer)
     for (var i = 0; i < signers.length; i++) {
-      keys.push({pubkey: signers[i], isSigner: false, isWritable: true});
+      keys.push({pubkey: new web3.PublicKey(signers[i].signer), isSigner: false, isWritable: true});
     }
-
+/*
+[ { pubkey:
+     PublicKey {
+       _bn:
+        <BN: f450a75758fa2b517424ddd479c559f1bf15ca4305a99fc96a79d6be55e89606> },
+    isSigner: false,
+    isWritable: true },
+  { pubkey:
+     PublicKey {
+       _bn:
+        <BN: 2a7f1c40aab3f8f36d2ba9894871a50055f768f87e2f88d1bd4d77a27e58398> },
+    isSigner: false,
+    isWritable: true },
+  { pubkey:
+     PublicKey {
+       _bn:
+        <BN: 2a7f1c40aab3f8f36d2ba9894871a50055f768f87e2f88d1bd4d77a27e58398> },
+    isSigner: false,
+    isWritable: true } ]
+    
+    
+    { pubkey:
+   PublicKey {
+     _bn:
+      <BN: 2a7f1c40aab3f8f36d2ba9894871a50055f768f87e2f88d1bd4d77a27e58398> },
+  isSigner: true,
+  isWritable: true } { pubkey:
+   PublicKey {
+     _bn:
+      <BN: 42702fefec83f1cc9583539600ea6b1936b7260bf22919b735a931d19b38ed07> },
+  isSigner: false,
+  isWritable: true }
+  
+  'F'*/
     const instruction = new web3.TransactionInstruction({
-      keys: [
-        keys
-      ],
+      keys: keys,
       programId,
       data: meta,
     });
-    console.log("awaiting transaction");
+    console.log(keys, meta.toString());
+    console.log("finalizing petition outcome");
     await web3.sendAndConfirmTransaction(
       connection,
       new web3.Transaction().add(instruction),
@@ -669,5 +708,6 @@ const { sleep } = require('./util/sleep');
   exports.replyToPost = replyToPost;
   exports.createPetitionForPost = createPetitionForPost;
   exports.voteOnPetition = voteOnPetition;
+  exports.finalizePetitionOutcome = finalizePetitionOutcome;
   exports.reportPost = reportPost;
   exports.likePost = likePost;

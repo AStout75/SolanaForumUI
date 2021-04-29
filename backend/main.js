@@ -83,11 +83,15 @@ const { sleep } = require('./util/sleep');
 
     socket.on('vote-petition', petition => {
         let pk = new PublicKey(petition.pubkey);
+        let pk2 = new PublicKey(petition.offendingPubkey);
         console.log("vote petition func, pk is", pk);
-        hw1.voteOnPetition(pk, 1); //test vote yes for now
+        
         //if done //RACE condition?
-        if (petition.numSignatures == petition.signatureCapacity - 1) {
-          hw1.finalizePetitionOutcome(petition.pubkey, petition.offendingPubkey, petition.signatures);
+        if (petition.numSignatures == petition.signatureCapacity) {
+          hw1.finalizePetitionOutcome(pk, pk2, petition.signatures);
+        }
+        else {
+          hw1.voteOnPetition(pk, 1); //test vote yes for now
         }
     });
 
