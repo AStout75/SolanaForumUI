@@ -40,7 +40,7 @@
     "build": "webpack --config webpack.config.js && sass src/sass/styles.sass dist/styles/styles.css",
     "webpack": "webpack --config webpack.config.js",
     "sass": "sass src/sass/styles.sass dist/styles/styles.css",
-    "test" : "mocha test/test.js --timeout 30000 --exit"
+    "test": "mocha test/test.js --timeout 300000 --exit"
   },
   "repository": {
     "type": "git",

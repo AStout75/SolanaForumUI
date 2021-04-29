@@ -312,6 +312,8 @@ const { sleep } = require('./util/sleep');
       publicKey: greetedAccount.publicKey.toBase58(),
       secretKey: t.toString('base64'),
     });
+
+    return programId;
   }
   
   /**
@@ -697,6 +699,10 @@ const { sleep } = require('./util/sleep');
     return arrayOfPosts(accountInfo.data);
   }
 
+  function getGreetedPublicKey() {
+    return greetedAccount.publicKey;
+  }
+
   exports.arrayOfPosts = arrayOfPosts;
   exports.establishConnection = establishConnection;
   exports.establishPayer = establishPayer;
@@ -711,3 +717,4 @@ const { sleep } = require('./util/sleep');
   exports.finalizePetitionOutcome = finalizePetitionOutcome;
   exports.reportPost = reportPost;
   exports.likePost = likePost;
+  exports.getGreetedPublicKey = getGreetedPublicKey;
