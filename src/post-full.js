@@ -1,9 +1,14 @@
 import SocketContext from "./socket-context";
 import {useLocation} from "react-router-dom";
-import {getRepliesToPost, getLikesForPost, getReportsForPost} from "./data-util/parse";
+import {getRepliesToPost, getLikesForPost, getReportsForPost, getPetitionsForPost} from "./data-util/parse";
 import NavBar from "./nav-bar";
+import Footer from "./footer";
 import PostIcons from "./post-icons";
 import Reply from "./reply";
+import PostTabs from "./post-tabs";
+import PostContent from "./post-content";
+import PostPetition from "./post-petition";
+
 
 class PostFull extends React.Component {
     constructor(props) {
@@ -12,6 +17,13 @@ class PostFull extends React.Component {
             thisPost: {},
             loaded: false
         }
+
+        var content = <PostContent post={this.state.thisPost} />
+        this.state = {
+            tab: "post"
+        };
+        
+
         if (!this.props.location.state) { //navigated here from a URL, rather than grid
             //Update the grid of posts when the server refreshes us
             this.props.socket.on("send-posts", accounts => {
@@ -31,7 +43,8 @@ class PostFull extends React.Component {
                             target: accounts[i].posts[j].target,
                             replies: getRepliesToPost(accounts, accounts[i].pubkey, j),
                             likes: getLikesForPost(accounts, accounts[i].pubkey, j),
-                            reports: getReportsForPost(accounts, accounts[i].pubkey, j)
+                            reports: getReportsForPost(accounts, accounts[i].pubkey, j),
+                            petitions: getPetitionsForPost(accounts, accounts[i].pubkey, j)
                         };
                         //console.log(newPost);
                         //parsedPosts.push(newPost);
@@ -47,6 +60,12 @@ class PostFull extends React.Component {
                 });
                 this.props.socket.emit('request-posts');
             }
+    }
+
+    selectTab(state) {
+        this.setState({
+            tab: state
+        })
     }
 
     componentDidMount() {
@@ -72,43 +91,32 @@ class PostFull extends React.Component {
     }
 
     render() {
-        console.log("render.");
+        
         if (this.state.loaded) {
+            if (this.state.tab == "post") {
+                this.content = <PostContent post={this.state.thisPost} full={true} />
+            }
+            else if (this.state.tab.substring(0, "petition".length) == "petition") {
+                console.log("petition".length);
+                var idx = this.state.tab.substring("petition".length, this.state.tab.length);
+                console.log("petitions is", this.state.thisPost.petitions, "and we want the index", idx);
+                this.content = <PostPetition petition={this.state.thisPost.petitions[parseInt(idx) - 1]} index={idx} />
+            }
             return (
                 <div>
                     <NavBar />
-                    <div className="post-full-container">
-                        <div className={"post-full" + (this.state.thisPost.reports >= 2 ? "post-reported" : "")}>
-                            <div>
-                                <div>
-                                    <h2>{this.state.thisPost.likes.toString() + " likes"}</h2>
-                                </div>
-                                <div>
-                                    <p>{this.state.thisPost.body}</p>
-                                </div>
-                                <PostIcons post={this.state.thisPost} />
-                            </div>
-                        </div>
-                        <div>
-                            {this.state.thisPost.replies.map((element, index, arr) => {
-                                //element.likes = getLikesForPost(accounts, accounts[i].pubkey, j),
-                                //element.reports = getReportsForPost(accounts, accounts[i].pubkey, j)
-                                    return (
-                                        <Reply key={index} post={element} />
-                                    )
-                                })
-                            }
-                            </div>
+                    <div className="post-full-container container">
+                        <PostTabs select={this.selectTab.bind(this)} selectedTab={this.state.tab} petitions={this.state.thisPost.petitions} />
+                        {this.content}
                     </div>
+                    <Footer />
                 </div>
                 )
         }
         else {
             return <div>Loading...</div>
         }
-        
-        }
-    
+    }
 }
 
 

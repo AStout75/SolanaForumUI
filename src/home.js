@@ -13,7 +13,10 @@ class Home extends React.Component {
         return (
             <div>
                 <NavBar />
-                <PostGrid />
+                <div className="container">
+                    <PostGrid />
+                </div>
+                
                 <Footer />
             </div>
         )

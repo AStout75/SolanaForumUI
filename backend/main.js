@@ -81,7 +81,7 @@ const { sleep } = require('./util/sleep');
         hw1.createPetitionForPost(pk, report.target.index);
     });
 
-    socket.on('vote-petition', petition => {
+    socket.on('vote-petition', (petition, vote) => {
         let pk = new PublicKey(petition.pubkey);
         let pk2 = new PublicKey(petition.offendingPubkey);
         console.log("vote petition func, pk is", pk);
@@ -91,7 +91,7 @@ const { sleep } = require('./util/sleep');
           hw1.finalizePetitionOutcome(pk, pk2, petition.signatures);
         }
         else {
-          hw1.voteOnPetition(pk, 1); //test vote yes for now
+          hw1.voteOnPetition(pk, vote); //test vote yes for now
         }
     });
 
@@ -108,7 +108,8 @@ const { sleep } = require('./util/sleep');
       // aside from polling like this
       
       accountsBundle = await getAllPosts();
-      await sleep(1500);
+      io.emit('send-posts', accountsBundle);
+      await sleep(2500);
     }
   }
   

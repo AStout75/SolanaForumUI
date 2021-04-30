@@ -1,6 +1,6 @@
 import SocketContext from "./socket-context";
 
-class PostAbbrevPetition extends React.Component {
+class PostPetition extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -31,10 +31,10 @@ class PostAbbrevPetition extends React.Component {
     }
 }
 
-const PostAbbrevPetitionWithSocket = props => (
+const PostPetitionWithSocket = props => (
     <SocketContext.Consumer>
-        {socket => <PostAbbrevPetition {...props} socket={socket} />}
+        {socket => <PostPetition {...props} socket={socket} />}
     </SocketContext.Consumer>
 )
 
-export {PostAbbrevPetitionWithSocket as default}
+export {PostPetitionWithSocket as default}

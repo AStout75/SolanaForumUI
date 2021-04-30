@@ -8,16 +8,28 @@ class Reply extends React.Component {
 
     render() {
         console.log("In reply, the props is ", this.props.post);
+        if (this.props.post == null) {
+            return (
+                <div className="post-reply-empty rounded">
+                    <div className="reply-text">
+                        <p>No replies yet.</p>
+                    </div>
+                </div>
+            )
+        }
         return (
-            <div className="post-reply">
-                <div>
-                    <h2>{this.props.post.likes.toString() + " likes"}</h2>
+            <div>
+                <div className="post-reply rounded">
+                    <div>
+                        <div className="reply-text">
+                            <p>{this.props.post.body}</p>
+                        </div>
+                    </div>
+                    <PostIcons post={this.props.post} />
                 </div>
-                <div>
-                    <p>{this.props.post.body}</p>
-                </div>
-                <PostIcons post={this.props.post} />
+                
             </div>
+            
         )
     }
 }
