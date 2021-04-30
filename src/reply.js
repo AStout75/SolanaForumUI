@@ -7,7 +7,6 @@ class Reply extends React.Component {
     }
 
     render() {
-        console.log("In reply, the props is ", this.props.post);
         if (this.props.post == null) {
             return (
                 <div className="post-reply-empty rounded">

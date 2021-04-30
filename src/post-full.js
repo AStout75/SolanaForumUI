@@ -82,9 +82,7 @@ class PostFull extends React.Component {
                 this.content = <PostContent post={this.state.thisPost} full={true} />
             }
             else if (this.state.tab.substring(0, "petition".length) == "petition") {
-                console.log("petition".length);
                 var idx = this.state.tab.substring("petition".length, this.state.tab.length);
-                console.log("petitions is", this.state.thisPost.petitions, "and we want the index", idx);
                 this.content = <PostPetition petition={this.state.thisPost.petitions[parseInt(idx) - 1]} index={idx} />
             }
             return (

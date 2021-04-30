@@ -85,7 +85,6 @@ export function getReportsForPost(accounts, pubkey, index) {
 */
 
 export function getPetitionsForPost(accounts, pubkey, index) {
-    console.log("Motherfucker", accounts);
     var res = [];
     for(let i = 0; i < accounts.length; i++) {
         if (accounts[i].data.type == 'petition') {
