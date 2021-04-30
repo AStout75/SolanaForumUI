@@ -12,11 +12,10 @@ class PostGrid extends React.Component {
         //Update the grid of posts when the server refreshes us
         this.props.socket.on("send-posts", accounts => {
             // ! Later, force the client to process the raw post data
-            console.log("Data from server", accounts);
+            //console.log("Data from server", accounts);
             let parsedPosts = [];
             for(let i = 0; i < accounts.length; i++) {
                 if (accounts[i].data.type == "user") {
-                    console.log("user account detected");
                     for(let j = 0; j < accounts[i].data.posts.length; j++) {
                         if (accounts[i].data.posts[j].type != 'P') {
                             continue;
@@ -36,7 +35,6 @@ class PostGrid extends React.Component {
                             element.likes = getLikesForPost(accounts, element.poster, element.index);
                             element.reports = getReportsForPost(accounts, element.poster, element.index);
                         }
-                        console.log(newPost);
                         parsedPosts.push(newPost);
                     }
                 }

@@ -1,27 +1,29 @@
 $primary-color: royalblue//#7290E9
 $secondary-color: white
+$tertiary-color: #15B097
 $danger-color: #F05675//#15B097
 
 
 $nav-font-size: 30px
-$breakpoint-2: 700px
-$breakpoint-3: 1200px
-$breakpoint-4: 1600px
+$breakpoint-2: 1200px
+$breakpoint-3: 2000px
+$breakpoint-4: 3000px
 
 @import url('https://fonts.googleapis.com/css2?family=Barlow&display=swap')
 body
     font-family: 'Barlow', sans-serif
+    background: white
 
 @mixin transition
     transition: 0.3s all
 
 @mixin icon
-    width: $nav-font-size * 1.4
-    height: $nav-font-size * 1.4
-    background-color: $primary-color
+    width: $nav-font-size * 1.1
+    height: $nav-font-size * 1.1
+    margin-right: 10px
     i
         color: $secondary-color
-        font-size: $nav-font-size * 0.85
+        font-size: $nav-font-size * 0.7
     //i:hover
         //background-color: darken($secondary-color, 10)
 
@@ -53,38 +55,47 @@ nav
 .icon
     @include transition
     @include icon
-    margin-right: 10px
+    background: $secondary-color
     i
+        color: $primary-color
         @include transition
+
+
 
 .icon:hover
     box-shadow: 0px 0px 0px white
     cursor: pointer
-    background-color: darken($primary-color, 10)
+    background-color: darken($secondary-color, 15)
     //i
         //color: darken($primary-color, 10)
 
+
+
 .flex-container
     width: 24.6%
-    margin: 5px 0% 0 0.32%
+    margin: 0px 0% 10px 0.32%
+
+//.flex-container:last-child
+//    margin-bottom: 0
 
 @media (max-width: $breakpoint-4)
     .flex-container
         width: 32.5%
-        margin: 5px 0% 0 0.6%
+        margin: 0px 0% 10px 0.6%
 
 @media (max-width: $breakpoint-3)
     .flex-container
         width: 49.1%
-        margin: 5px 0% 0 0.6%
+        margin: 0px 0% 10px 0.6%
 
 @media (max-width: $breakpoint-2)
     .flex-container
         width: 99%
-        margin: 5px 0% 0 0.5%
+        margin: 0px 0% 10px 0.5%
 
 .post-grid
-    margin-bottom: 5px
+    margin-top: 10px
+    margin-bottom: 0px
 
 .post-tabs
     text-align: center
@@ -207,16 +218,42 @@ nav
     background-color: $danger-color
 
 .bg-post
+    height: 450px
     background: $primary-color
+    border-top-left-radius: 0 !important
+
+.bg-post-full
+    background: $primary-color
+    border-top-left-radius: 0 !important
+
 .bg-petition
+    height: 450px
     background: $danger-color
+    border-top-left-radius: 0 !important
+
+.bg-petition-full
+    background: $danger-color
+    border-top-left-radius: 0 !important
         
 .post-abbrev
     @include post-basics
     position: relative
-    height: 300px
-    block-overflow: ellipsis
-    max-lines: 5
+    h2
+        text-overflow: ellipsis
+        white-space: nowrap
+        overflow: hidden
+
+.post-text p
+    display: -webkit-box
+    -webkit-line-clamp: 6
+    -webkit-box-orient: vertical
+    overflow: hidden
+    
+.reply-text p
+    display: -webkit-box
+    -webkit-line-clamp: 3
+    -webkit-box-orient: vertical
+    overflow: hidden
 
 .box-link:hover
     @include transition
@@ -225,15 +262,15 @@ nav
 .post-petition
     @include post-basics
     position: relative
-    height: 300px
-    block-overflow: ellipsis
-    max-lines: 5
+    height: calc(100% - 0rem)
+    
 
 .petition-buttons
     position: absolute
     bottom: 10px
-    width: calc(100% - 40px)
-    margin: 10px
+    width: calc(100% - 20px)
+    text-align: center
+
 
 @mixin petition-button
     @include transition
@@ -257,27 +294,84 @@ nav
 
 .post-full-container
     width: 100%
-    padding: 5px
+    margin-top: 10px
+    margin-bottom: 10px
 
 .post-full
     @include post-basics
-    min-height: 150px
 
 .post-reply
     @include post-basics
-    min-height: 150px
+    min-height: 50px
     margin-top: 5px
+
+.post-reply-empty
+    @include post-basics
+    min-height: 50px
+    margin-top: 5px
+    width: initial
     
 .post-icons
-    position: absolute
-    bottom: 5px
-    right: 0px
-    padding: 5px 0px 5px 10px
-    margin-right: 5px
+    //position: absolute
+    //bottom: 5px
+    //right: 0px
+    float: right
+    padding: 5px 0px 5px 0px
     .icon
-        opacity: 0.5
+        position: relative
+        opacity: 1
+        background-color: $primary-color
+        i
+            color: $secondary-color
+    .icon-danger
+        background-color: $danger-color
     .icon:hover
         opacity: 1
+        background-color: darken($primary-color, 15)
+    .icon-danger:hover
+        background-color: darken($danger-color, 15)
+    .icon:last-child
+        margin-right: 0
+
+.petition-icon
+    font-size: $nav-font-size * 0.8
+    color: $danger-color
+
+    width: 40px
+    display: inline-block
+    text-align: center
+    vertical-align: bottom
+
+.petition-votes-visualizer
+    margin-top: 5px
+    margin-left: 40px
+
+.petition-vote-filled
+    border: 1px solid black
+    display: inline-block
+    width: 15px
+    height: 15px
+    background: $tertiary-color
+    margin: 0 5px 5px 0
+
+.petition-vote-empty
+    display: inline-block
+    width: 15px
+    height: 15px
+    //background: lightgray
+    border: 1px solid black
+    margin: 0 5px 5px 0
+
+.like-tally
+    position: absolute
+    text-align: center
+    bottom: -9px
+    padding: 2px 4px
+    line-height: 1
+    min-width: 16px
+    font-size: 11px
+    color: white
+    background: $tertiary-color
     
 footer
     color: $secondary-color

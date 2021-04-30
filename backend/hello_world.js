@@ -385,7 +385,7 @@ const { sleep } = require('./util/sleep');
   
   async function createPetitionForPost(targetPubkey, targetIndex) {
     const petitionAccount = new web3.Account();
-    const accountSize = 89;
+    const accountSize = 122;
 
     console.log("Creating new account");
       //petitionAccount = new web3.Account();

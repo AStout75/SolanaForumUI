@@ -16,7 +16,10 @@ class PostIcons extends React.Component {
                 this.props.socket.emit('like-post', reply);
             }}
                 className="icon rounded-circle d-flex align-items-center justify-content-center">
-                <i className="fas fa-heart fa-sm"></i>
+                <i className="fas fa-heart fa-xs"></i>
+                <div className="like-tally rounded">
+                    {this.props.post.likes}
+                </div>
             </div>
             <div onClick={() => {
                 let reply = { target: {} };
@@ -26,13 +29,13 @@ class PostIcons extends React.Component {
                 this.props.socket.emit('reply-post', reply);
             }}
                 className="icon rounded-circle d-flex align-items-center justify-content-center">
-                <i className="fas fa-reply fa-sm"></i>
+                <i className="fas fa-reply fa-xs"></i>
             </div>
             <div className="icon rounded-circle d-flex align-items-center justify-content-center">
             <a href={'https://explorer.solana.com/address/' + this.props.post.poster + '?cluster=devnet'} target="_blank" ><i className="fas fa-info fa-sm"></i></a>
             </div>
             <div className="icon rounded-circle d-flex align-items-center justify-content-center">
-                <i className="fas fa-eye-slash fa-sm"></i>
+                <i className="fas fa-eye-slash fa-xs"></i>
             </div>
             <div onClick={() => {
                 let reply = { target: {} };
@@ -41,8 +44,8 @@ class PostIcons extends React.Component {
                 reply.body = prompt("Enter report reason");
                 this.props.socket.emit('report-post', reply);
             }}
-                className="icon rounded-circle d-flex align-items-center justify-content-center">
-                <i className="fas fa-flag fa-sm"></i>
+                className="icon icon-danger rounded-circle d-flex align-items-center justify-content-center">
+                <i className="fas fa-flag fa-xs"></i>
             </div>
         </div>
         )

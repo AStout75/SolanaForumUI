@@ -1,6 +1,7 @@
 import NavBar from './nav-bar';
 import PostGrid from './post-grid';
 import Footer from './footer';
+import InfoPanel from "./info-panel";
 
 import SocketContext from './socket-context';
 
@@ -13,7 +14,11 @@ class Home extends React.Component {
         return (
             <div>
                 <NavBar />
-                <PostGrid />
+                <div className="container">
+                    
+                    <PostGrid />
+                </div>
+                
                 <Footer />
             </div>
         )
