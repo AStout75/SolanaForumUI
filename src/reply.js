@@ -21,7 +21,7 @@ class Reply extends React.Component {
             <div>
                 <div className="post-reply rounded">
                     <div>
-                        <div className="reply-text">
+                        <div className={(this.props.full ? "" : "reply-text")}>
                             <p>{this.props.post.body}</p>
                         </div>
                     </div>

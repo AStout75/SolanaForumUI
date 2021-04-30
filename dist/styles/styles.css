@@ -48,25 +48,29 @@ nav span {
 
 .flex-container {
   width: 24.6%;
-  margin: 5px 0% 0 0.32%;
+  margin: 0px 0% 10px 0.32%;
+}
+
+.flex-container:last-child {
+  margin-bottom: 0;
 }
 
 @media (max-width: 3000px) {
   .flex-container {
     width: 32.5%;
-    margin: 5px 0% 0 0.6%;
+    margin: 0px 0% 10px 0.6%;
   }
 }
 @media (max-width: 2000px) {
   .flex-container {
     width: 49.1%;
-    margin: 5px 0% 0 0.6%;
+    margin: 0px 0% 10px 0.6%;
   }
 }
 @media (max-width: 1200px) {
   .flex-container {
     width: 99%;
-    margin: 5px 0% 0 0.5%;
+    margin: 0px 0% 10px 0.5%;
   }
 }
 .post-grid {
@@ -200,13 +204,23 @@ nav span {
 }
 
 .bg-post {
-  height: 375px;
+  height: 450px;
+  background: royalblue;
+  border-top-left-radius: 0 !important;
+}
+
+.bg-post-full {
   background: royalblue;
   border-top-left-radius: 0 !important;
 }
 
 .bg-petition {
-  height: 375px;
+  height: 450px;
+  background: #F05675;
+  border-top-left-radius: 0 !important;
+}
+
+.bg-petition-full {
   background: #F05675;
   border-top-left-radius: 0 !important;
 }
@@ -220,17 +234,24 @@ nav span {
   color: black;
   overflow: hidden;
   position: relative;
-  block-overflow: ellipsis;
-  max-lines: 5;
 }
-
-.post-text {
-  max-height: 130px;
+.post-abbrev h2 {
+  text-overflow: ellipsis;
+  white-space: nowrap;
   overflow: hidden;
 }
 
-.reply-text {
-  max-height: 100px;
+.post-text p {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.reply-text p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
@@ -248,15 +269,14 @@ nav span {
   color: black;
   overflow: hidden;
   position: relative;
-  height: calc(375px - 1rem);
-  block-overflow: ellipsis;
-  max-lines: 5;
+  height: calc(100% - 0rem);
 }
 
 .petition-buttons {
   position: absolute;
-  bottom: 5px;
-  width: calc(100% - 40px);
+  bottom: 10px;
+  width: calc(100% - 20px);
+  text-align: center;
 }
 
 .petition-button-keep {
@@ -297,7 +317,6 @@ nav span {
   background-color: white;
   color: black;
   overflow: hidden;
-  min-height: 150px;
 }
 
 .post-reply {
@@ -349,6 +368,37 @@ nav span {
 }
 .post-icons .icon:last-child {
   margin-right: 0;
+}
+
+.petition-icon {
+  font-size: 24px;
+  color: #F05675;
+  width: 40px;
+  display: inline-block;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.petition-votes-visualizer {
+  margin-top: 5px;
+  margin-left: 40px;
+}
+
+.petition-vote-filled {
+  border: 1px solid black;
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background: #15B097;
+  margin: 0 5px 5px 0;
+}
+
+.petition-vote-empty {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 1px solid black;
+  margin: 0 5px 5px 0;
 }
 
 .like-tally {

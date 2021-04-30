@@ -11,7 +11,7 @@ class PostContent extends React.Component {
 
     render() {
         return(
-        <div className="p-2 bg-post rounded">
+        <div className={"p-2 bg-post" + (this.props.full ? "-full" : "") + " rounded"}>
             <div className={"post-abbrev rounded"}>
                 <Link to={{
                     pathname: "/post/" + this.props.post.poster + "/" + this.props.post.index,
@@ -24,7 +24,7 @@ class PostContent extends React.Component {
                             <div>
                                 <h2>Insert post title here.</h2>
                             </div>
-                            <div className="post-text">
+                            <div className={(this.props.full ? "" : "post-text")}>
                                 <p>{this.props.post.body}</p>
                             </div>
                         </div>
@@ -36,15 +36,15 @@ class PostContent extends React.Component {
 
                 <div>
                     {this.props.post.replies.length == 0 &&
-                        <Reply post={null} />
+                        <Reply post={null} full={this.props.full} />
                     }
                     {!this.props.full && this.props.post.replies.length > 0 &&
-                        <Reply post={this.props.post.replies[0]} />
+                        <Reply post={this.props.post.replies[0]} full={this.props.full} />
                     }
                     {this.props.full && //if full post, show all replies
                         this.props.post.replies.map((element, index, arr) => {
                             return (
-                                <Reply key={index} post={element} />
+                                <Reply key={index} post={element} full={this.props.full} />
                             )
                         })
                     }

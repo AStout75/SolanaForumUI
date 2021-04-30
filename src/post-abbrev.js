@@ -13,7 +13,7 @@ class PostAbbrev extends React.Component {
         //STart here: make easy toggling between petition and content
         //consider making petition or content their own sub react classes with data passed in
         //and the tabs stay here...
-        var content = <PostContent post={this.props.post} />;
+        var content = <PostContent post={this.props.post} full={false} />;
 
         this.state = {
             tab: "post"
@@ -28,7 +28,7 @@ class PostAbbrev extends React.Component {
 
     render() {
         if (this.state.tab == "post") {
-            this.content = <PostContent post={this.props.post} />
+            this.content = <PostContent post={this.props.post} full={false} />
         }
         else if (this.state.tab.substring(0, "petition".length) == "petition") {
             var idx = this.state.tab.substring("petition".length, this.state.tab.length);
