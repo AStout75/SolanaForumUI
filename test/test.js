@@ -88,18 +88,28 @@ describe('Test Sending Multiple Messages Using New ID', function() {
       const payer = await hw1.establishPayer();
       const l = await hw1.loadProgram();
       // console.log('Program already loaded to account', load.toBase58());
-      const post = await hw1.sayHello("test message from script, gets replied to and liked twice", "post");
-      const post1 = await hw1.sayHello("test message from script 1, getes replied to", "post");
-      const post2 = await hw1.sayHello("test message from script 2, gets liked", "post");
-      const post3 = await hw1.sayHello("test message from script 3, O REPORT", "post");
+      const post = await hw1.sayHello("Hospitalizations in CA are now at an ALL TIME LOW since the start of the pandemic.", "post");
+      const post1 = await hw1.sayHello("COVID Treatment At Home: If < 60 y, pulse ox > 92% and have no chronic diseases, use ibuprofen etc. Isolate for 10-d and expect recovery in 2-3 wks.", "post");
+      const post2 = await hw1.sayHello("As vaccination drives beat back Covid-19 in many Western countries, health experts say quicker and smarter testing is the route to keeping the disease under control as restrictions on daily life ease", "post");
+      const post3 = await hw1.sayHello("A Dean Koontz novel in 1981 predicted the outbreak of Coronavirus!", "post");
+      const post4 = await hw1.sayHello("MORE charges get withdrawn, the fakery of covid measures becomes clearer everyday.", "post");
+
       // const pk = new PublicKey(load);
       var load = hw1.getGreetedPublicKey();
-      const r1 = await hw1.replyToPost("reply to post 1", load, 0);
-      const r12 = await hw1.replyToPost("2nd reply to post 1", load, 0);
-      const r2 = await hw1.replyToPost("reply to post 2", load, 1);
+      const r1 = await hw1.replyToPost("Great news!", load, 0);
+      const r12 = await hw1.replyToPost("A huge milestone for CA", load, 0);
+      const r2 = await hw1.replyToPost("Thank you for the help!", load, 1);
+      const r3 = await hw1.replyToPost("This is fake", load, 3);
+      const r4 = await hw1.replyToPost("This is fake news", load, 4);
       const l1 = await hw1.likePost(load, 2);
       const l2 = await hw1.likePost(load, 0);
       const l3 = await hw1.likePost(load, 0);
+      // const l4 = await hw1.likePost(load, 2);
+      // const l5 = await hw1.likePost(load, 0);
+      // const l6 = await hw1.likePost(load, 0);
+      // const l7 = await hw1.likePost(load, 2);
+      // const l8 = await hw1.likePost(load, 0);
+      // const l9 = await hw1.likePost(load, 0);
       // const rep1 = await hw1.reportPost("reason1", load, 3);
       const pet1 = await hw1.createPetitionForPost(load, 3);
 
