@@ -438,6 +438,7 @@ const { sleep } = require('./util/sleep');
         preflightCommitment: 'singleGossip',
       },
     );
+    return petitionAccount.publicKey;
   }
 
   /*

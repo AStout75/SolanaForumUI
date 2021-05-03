@@ -5,60 +5,60 @@ const fs = require("fs");
 const { PublicKey } = require('@solana/web3.js');
 
 
-describe('Test Establishing Connection', function() {
+// describe('Test Establishing Connection', function() {
 
-    context('', function() {
-      it('', async function() {
+//     context('', function() {
+//       it('', async function() {
       
-        // use await to wait until the promise is fulfilled
-        const econn = await hw1.establishConnection();
-      })
+//         // use await to wait until the promise is fulfilled
+//         const econn = await hw1.establishConnection();
+//       })
       
-    })
-})
+//     })
+// })
 
-describe('Test Establishing Payer', function() {
+// describe('Test Establishing Payer', function() {
 
-    context('', function() {
-      it('', async function() {
+//     context('', function() {
+//       it('', async function() {
       
-        // use await to wait until the promise is fulfilled
-        const econn = await hw1.establishConnection();
-        const payer = await hw1.establishPayer();
-      })
+//         // use await to wait until the promise is fulfilled
+//         const econn = await hw1.establishConnection();
+//         const payer = await hw1.establishPayer();
+//       })
       
-    })
-})
+//     })
+// })
 
-describe('Test Loading Program', function() {
+// describe('Test Loading Program', function() {
 
-    context('', function() {
-      it('', async function() {
+//     context('', function() {
+//       it('', async function() {
       
-        // use await to wait until the promise is fulfilled
-        const econn = await hw1.establishConnection();
-        const payer = await hw1.establishPayer();
-        const load = await hw1.loadProgram();
-      })
+//         // use await to wait until the promise is fulfilled
+//         const econn = await hw1.establishConnection();
+//         const payer = await hw1.establishPayer();
+//         const load = await hw1.loadProgram();
+//       })
       
-    })
-})
+//     })
+// })
 
-describe('Test Sending Message', function() {
+// describe('Test Sending Message', function() {
 
-  context('', function() {
-    it('', async function() {
+//   context('', function() {
+//     it('', async function() {
     
-      // use await to wait until the promise is fulfilled
-      const econn = await hw1.establishConnection();
-      const payer = await hw1.establishPayer();
-      const load = await hw1.loadProgram();
-      const post = hw1.sayHello("test message from script", "post");
-      assert.notStrictEqual(post, "test message from script");
-    })
+//       // use await to wait until the promise is fulfilled
+//       const econn = await hw1.establishConnection();
+//       const payer = await hw1.establishPayer();
+//       const load = await hw1.loadProgram();
+//       const post = hw1.sayHello("test message from script", "post");
+//       assert.notStrictEqual(post, "test message from script");
+//     })
     
-  })
-})
+//   })
+// })
 
    function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -95,9 +95,13 @@ describe('Test Sending Multiple Messages Using New ID', function() {
       const l1 = await hw1.likePost(load, 2);
       const l2 = await hw1.likePost(load, 0);
       const l3 = await hw1.likePost(load, 0);
-      const pet1 = await hw1.createPetitionForPost(load, 3);
-      const pet2 = await hw1.createPetitionForPost(load, 4);
+      var pet1 = await hw1.createPetitionForPost(load, 3);
+      var pet2 = await hw1.createPetitionForPost(load, 4);
+      const v1 = await hw1.voteOnPetition(pet1, 3)
+      const v2 = await hw1.voteOnPetition(pet2, 4)
+      // const v3 = await hw1.voteOnPetition(pet2, 4)
 
+      var i = 0;
 
       let accountsBundle = await hw1.bundleAllPosts();
       for(let i = 0; i < accountsBundle.length; i++) {
@@ -146,8 +150,9 @@ describe('Test Sending Multiple Messages Using New ID', function() {
     })
 
       while(true) {
-        await sleep(500);
         accountsBundle = await hw1.bundleAllPosts();
+        serve.emit('send-posts', accountsBundle);
+        await sleep(2500);
       }
     })
     
