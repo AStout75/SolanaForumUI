@@ -4,72 +4,61 @@ const assert = require("assert");
 const fs = require("fs");
 const { PublicKey } = require('@solana/web3.js');
 
-// describe('Test Setting Up Server', function() {
 
-//   context('', function() {
-//     it('', async function() {
+describe('Test Establishing Connection', function() {
+
+    context('', function() {
+      it('', async function() {
+      
+        // use await to wait until the promise is fulfilled
+        const econn = await hw1.establishConnection();
+      })
+      
+    })
+})
+
+describe('Test Establishing Payer', function() {
+
+    context('', function() {
+      it('', async function() {
+      
+        // use await to wait until the promise is fulfilled
+        const econn = await hw1.establishConnection();
+        const payer = await hw1.establishPayer();
+      })
+      
+    })
+})
+
+describe('Test Loading Program', function() {
+
+    context('', function() {
+      it('', async function() {
+      
+        // use await to wait until the promise is fulfilled
+        const econn = await hw1.establishConnection();
+        const payer = await hw1.establishPayer();
+        const load = await hw1.loadProgram();
+      })
+      
+    })
+})
+
+describe('Test Sending Message', function() {
+
+  context('', function() {
+    it('', async function() {
     
-//       // use await to wait until the promise is fulfilled
-//       const serve = server.setUpServer();
-//     })
+      // use await to wait until the promise is fulfilled
+      const econn = await hw1.establishConnection();
+      const payer = await hw1.establishPayer();
+      const load = await hw1.loadProgram();
+      const post = hw1.sayHello("test message from script", "post");
+      assert.notStrictEqual(post, "test message from script");
+    })
     
-//   })
-// })
-
-// describe('Test Establishing Connection', function() {
-
-//     context('', function() {
-//       it('', async function() {
-      
-//         // use await to wait until the promise is fulfilled
-//         const econn = await hw1.establishConnection();
-//       })
-      
-//     })
-// })
-
-// describe('Test Establishing Payer', function() {
-
-//     context('', function() {
-//       it('', async function() {
-      
-//         // use await to wait until the promise is fulfilled
-//         const econn = await hw1.establishConnection();
-//         const payer = await hw1.establishPayer();
-//       })
-      
-//     })
-// })
-
-// describe('Test Loading Program', function() {
-
-//     context('', function() {
-//       it('', async function() {
-      
-//         // use await to wait until the promise is fulfilled
-//         const econn = await hw1.establishConnection();
-//         const payer = await hw1.establishPayer();
-//         const load = await hw1.loadProgram();
-//       })
-      
-//     })
-// })
-
-// describe('Test Sending Message', function() {
-
-//   context('', function() {
-//     it('', async function() {
-    
-//       // use await to wait until the promise is fulfilled
-//       const econn = await hw1.establishConnection();
-//       const payer = await hw1.establishPayer();
-//       const load = await hw1.loadProgram();
-//       const post = hw1.sayHello("test message from script", "post");
-//       assert.notStrictEqual(post, "test message from script");
-//     })
-    
-//   })
-// })
+  })
+})
 
    function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -83,7 +72,9 @@ describe('Test Sending Multiple Messages Using New ID', function() {
       // use await to wait until the promise is fulfilled
       const serve = server.setUpServer();
       const path = './backend/util/store/config.json'
-      fs.unlinkSync(path);
+      if (fs.existsSync(path)) {
+        fs.unlinkSync(path);
+      }
       const econn = await hw1.establishConnection();
       const payer = await hw1.establishPayer();
       const l = await hw1.loadProgram();
@@ -104,14 +95,9 @@ describe('Test Sending Multiple Messages Using New ID', function() {
       const l1 = await hw1.likePost(load, 2);
       const l2 = await hw1.likePost(load, 0);
       const l3 = await hw1.likePost(load, 0);
-      // const l4 = await hw1.likePost(load, 2);
-      // const l5 = await hw1.likePost(load, 0);
-      // const l6 = await hw1.likePost(load, 0);
-      // const l7 = await hw1.likePost(load, 2);
-      // const l8 = await hw1.likePost(load, 0);
-      // const l9 = await hw1.likePost(load, 0);
-      // const rep1 = await hw1.reportPost("reason1", load, 3);
       const pet1 = await hw1.createPetitionForPost(load, 3);
+      const pet2 = await hw1.createPetitionForPost(load, 4);
+
 
       let accountsBundle = await hw1.bundleAllPosts();
       for(let i = 0; i < accountsBundle.length; i++) {
