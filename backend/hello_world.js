@@ -108,6 +108,17 @@ const { sleep } = require('./util/sleep');
 
   }
 
+  function getTitleLength(d, index, length) {
+    let titleLength = 0;
+    for(let i = 0; i < length; i++) {
+      if(d[i] != ";".charCodeAt(0)) {
+        titleLength++;
+      } else {
+        break;
+      }
+    }
+  }
+
   function readPostBody(d, index, length) {
     let returned = "";
     for(let i = 0; i < length; i++) {
@@ -150,7 +161,7 @@ const { sleep } = require('./util/sleep');
       console.log("There are", postCount, "posts in this account.");
       // String.fromCharCode(uint8)
       for(let post = 0; post < postCount; post++) {
-        let currentPost = { type: "", body: "", target: "" };
+        let currentPost = { type: "", body: "", target: "", title: "" };
         let currentLength = d.readUInt16LE(i);
         if(currentLength == 0)
           throw "Invalid account data";
@@ -161,8 +172,11 @@ const { sleep } = require('./util/sleep');
         i += 1;
         switch(currentPost.type) {
         case "P":
+          // Read title
+          let tl = getTitleLength(d, i, currentLength - 1);
+          currentPost.title = readPostBody(d, i, tl);
           // Read body
-          currentPost.body = readPostBody(d, i, currentLength - 1);
+          currentPost.body = readPostBody(d, i + tl + 1, currentLength - 1 - tl);
           break;
         case "R":
         case "X":
