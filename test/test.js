@@ -60,9 +60,12 @@ const { PublicKey } = require('@solana/web3.js');
 //   })
 // })
 
-   function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-   }
+/*
+  Function to aid in keeping the server running
+*/
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 describe('Test Sending Multiple Messages Using New ID', function() {
 
@@ -179,6 +182,8 @@ describe('Test Sending Multiple Messages Using New ID', function() {
         });
     })
 
+      //This loop runs on a 0.5s timer and sends posts, replies, likes, petitions, and reports 
+      //to simulate a community of users
       var postTimer = 0;
       while(true) {
         accountsBundle = await hw1.bundleAllPosts();

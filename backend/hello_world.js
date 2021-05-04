@@ -382,6 +382,9 @@ async function getNewPayer() {
   );
 }
 
+/*
+Reply to a pre existing post
+*/
 async function replyToPost(body, targetPubkey, targetIndex) {
   let post = Buffer.alloc(1 + 32 + 2 + body.length);
   console.log("Buffer is:", post.toString("hex"));
@@ -416,7 +419,6 @@ async function replyToPost(body, targetPubkey, targetIndex) {
 Create a new account to store the data
 Bundle the transaction data
 */
-
 async function createPetitionForPost(targetPubkey, targetIndex) {
   const petitionAccount = new web3.Account();
   const accountSize = 122;
@@ -476,9 +478,10 @@ async function createPetitionForPost(targetPubkey, targetIndex) {
 }
 
 /*
-
+Vote on a previously existing petition
+0 for keep
+1 for remove
 */
-
 async function voteOnPetition(petitionPubkey, vote) {
   let meta = Buffer.alloc(1 + 1);
   meta.writeUInt8("V".charCodeAt(0), 0);
@@ -512,7 +515,11 @@ async function voteOnPetition(petitionPubkey, vote) {
 
 }
 
-
+/*
+SHOWCASE SPECIFIC
+Sets the greetedAccount ao a new account so posts
+come from different pubkeys with more space
+*/
 async function setNewAccount() {
   console.log("Creating new account");
   greetedAccount = new web3.Account();
@@ -545,6 +552,10 @@ async function setNewAccount() {
   return greetedAccount.publicKey;
 }
 
+
+/*
+Removes the petitioned post if it has reached the required amount of signatures
+*/
 async function finalizePetitionOutcome(petitionPubkey, offenderPubkey, signers) {
   let meta = Buffer.alloc(1);
   meta.writeUInt8("F".charCodeAt(0), 0);
@@ -575,6 +586,11 @@ async function finalizePetitionOutcome(petitionPubkey, offenderPubkey, signers) 
   );
 }
 
+
+/*
+SHOWCASE SPECIFIC
+Removes the petitioned post if it has reached the required amount of signatures
+*/
 async function finalizePetitionOutcomeShowcase(petitionPubkey, offenderPubkey, signers) {
   let meta = Buffer.alloc(1);
   meta.writeUInt8("F".charCodeAt(0), 0);
@@ -605,6 +621,9 @@ async function finalizePetitionOutcomeShowcase(petitionPubkey, offenderPubkey, s
   );
 }
 
+/*
+Reports a post with a given reason
+*/
 async function reportPost(body, targetPubkey, targetIndex) {
   let post = Buffer.alloc(1 + 32 + 2 + body.length);
   post.writeUInt8("X".charCodeAt(0), 0);
@@ -634,6 +653,9 @@ async function reportPost(body, targetPubkey, targetIndex) {
   console.log("Reported post with buffer:", post.toString("hex"));
 }
 
+/*
+Code to send a like to a previously genereated post
+*/
 async function likePost(targetPubkey, targetIndex) {
   let post = Buffer.alloc(1 + 32 + 2);
   post.writeUInt8("L".charCodeAt(0), 0);
@@ -752,24 +774,22 @@ async function bundleAllPosts() {
   return returnedArray;
 }
 
- async function getArrayOfPosts(pk) {
-  const accountInfo = await connection.getAccountInfo(pk);
-  if (accountInfo === null) {
-    throw 'Error: cannot get data for account ';
+  //returns an array containing all of the accountInfo (posts, replies, etc.)
+  async function getArrayOfPosts(pk) {
+    const accountInfo = await connection.getAccountInfo(pk);
+    if (accountInfo === null) {
+      throw 'Error: cannot get data for account ';
+    }
+    console.log(accountInfo.executable, accountInfo.lamports, accountInfo.owner.toBase58());
+    if(accountInfo.data) {
+      console.log("Data in this account!");
+    }
+    return arrayOfPosts(accountInfo.data);
   }
-  console.log(accountInfo.executable, accountInfo.lamports, accountInfo.owner.toBase58());
-  if(accountInfo.data) {
-    console.log("Data in this account!");
-  }
-  return arrayOfPosts(accountInfo.data);
-}
 
+//Returns the public key of the greeted account
 function getGreetedPublicKey() {
   return greetedAccount.publicKey;
-}
-
-function getGreetedAccount() {
-  return greetedAccount;
 }
 
 exports.arrayOfPosts = arrayOfPosts;
@@ -789,5 +809,4 @@ exports.likePost = likePost;
 exports.getGreetedPublicKey = getGreetedPublicKey;
 exports.setNewAccount = setNewAccount;
 exports.getNewPayer = getNewPayer;
-exports.getGreetedAccount = getGreetedAccount;
 exports.finalizePetitionOutcomeShowcase = finalizePetitionOutcomeShowcase;
