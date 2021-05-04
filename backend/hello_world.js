@@ -117,6 +117,14 @@ function readPostBody(d, index, length) {
   return returned;
 }
 
+function readUsername(d) {
+  let returned = "";
+  for(let i = 0; i < 32; i++) {
+    returned += String.fromCharCode(d.readUInt8(i + 4));
+  }
+  return returned;
+}
+
 function signatureCapacity(length) {
   return Math.floor((length - 56) / 33)
 } 
@@ -128,7 +136,7 @@ function arrayOfPosts(d) {
   //console.log("Parsing account data:");
   //console.log(d.toString("hex"));
   let result = { type: "uninitialized", posts: [], signatures: [],
-                 offendingPost: 0, reputationRequirement: 0, numSignatures: 0 };
+                 offendingPost: 0, reputationRequirement: 0, numSignatures: 0, username: "" };
   if(d.readUInt8(0) == 2) {
     result.type = "petition";
     let i = 56;
@@ -145,6 +153,7 @@ function arrayOfPosts(d) {
   else if(d.readUInt8(0) == 1) {
     result.type = "user";
     //console.log(d.toString("hex"));
+    result.username = readUsername(d);
     let i = 48;
     const postCount = d.readUInt16LE(2);
     console.log("There are", postCount, "posts in this account.");
