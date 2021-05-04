@@ -389,6 +389,14 @@ nav span {
   margin: 0 5px 5px 0;
 }
 
+.petition-vote-against {
+  background: royalblue;
+}
+
+.petition-vote-for {
+  background: #F05675;
+}
+
 .petition-vote-empty {
   display: inline-block;
   width: 15px;

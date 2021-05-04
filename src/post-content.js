@@ -6,7 +6,6 @@ import Reply from "./reply";
 class PostContent extends React.Component {
     constructor(props) {
         super(props);
-
     }
 
     render() {
@@ -28,30 +27,26 @@ class PostContent extends React.Component {
                                 <p>{this.props.post.body}</p>
                             </div>
                         </div>
-                        
                     </div>
                 </Link>
                 <PostIcons post={this.props.post} />
             </div>
-
-                <div>
-                    {this.props.post.replies.length == 0 &&
-                        <Reply post={null} full={this.props.full} />
-                    }
-                    {!this.props.full && this.props.post.replies.length > 0 &&
-                        <Reply post={this.props.post.replies[0]} full={this.props.full} />
-                    }
-                    {this.props.full && //if full post, show all replies
-                        this.props.post.replies.map((element, index, arr) => {
-                            return (
-                                <Reply key={index} post={element} full={this.props.full} />
-                            )
-                        })
-                    }
-                </div>
-            
+            <div>
+                {this.props.post.replies.length == 0 &&
+                    <Reply post={null} full={this.props.full} />
+                }
+                {!this.props.full && this.props.post.replies.length > 0 &&
+                    <Reply post={this.props.post.replies[0]} full={this.props.full} />
+                }
+                {this.props.full && //if full post, show all replies
+                    this.props.post.replies.map((element, index, arr) => {
+                        return (
+                            <Reply key={index} post={element} full={this.props.full} />
+                        )
+                    })
+                }
+            </div>
         </div>
-        
         )
     }
 }
