@@ -9,6 +9,8 @@ class PostContent extends React.Component {
     }
 
     render() {
+        const title = this.props.post.body.split(';')[0];
+        const body = this.props.post.body.split(';')[1];
         return(
         <div className={"p-2 bg-post" + (this.props.full ? "-full" : "") + " rounded"}>
             <div className={"post-abbrev rounded"}>
@@ -21,10 +23,10 @@ class PostContent extends React.Component {
                     <div className="box-link">
                         <div>
                             <div>
-                                <h2>Insert post title here.</h2>
+                                <h2>{title}</h2>
                             </div>
                             <div className={(this.props.full ? "" : "post-text")}>
-                                <p>{this.props.post.body}</p>
+                                <p>{body}</p>
                             </div>
                         </div>
                     </div>
