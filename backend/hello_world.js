@@ -692,6 +692,33 @@ async function likePost(targetPubkey, targetIndex) {
   console.log("Liked post with buffer:", post.toString("hex"));
 }
 
+/*
+Set the user's display name
+*/
+async function setUsername(username) {
+  let instructionData = Buffer.alloc(1 + username.length);
+  instructionData.writeUInt8("s".charCodeAt(0), 0);
+  for(let i = 0; i < username.length; i++) {
+    instructionData.writeUInt8(username.charCodeAt(i), 1 + i);
+  }
+  console.log("Changing username with buffer:");
+  console.log(instructionData.toString("hex"));
+  const instruction = new web3.TransactionInstruction({
+    keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
+    programId,
+    data: instructionData,
+  });
+  await web3.sendAndConfirmTransaction(
+    connection,
+    new web3.Transaction().add(instruction),
+    [payerAccount, greetedAccount],
+    {
+      commitment: 'singleGossip',
+      preflightCommitment: 'singleGossip',
+    },
+  );
+}
+
 /**
  * Report the number of times the greeted account has been said hello to
  */
@@ -819,3 +846,4 @@ exports.getGreetedPublicKey = getGreetedPublicKey;
 exports.setNewAccount = setNewAccount;
 exports.getNewPayer = getNewPayer;
 exports.finalizePetitionOutcomeShowcase = finalizePetitionOutcomeShowcase;
+exports.setUsername = setUsername;

@@ -100,6 +100,10 @@ const { sleep } = require('./util/sleep');
         console.log("Recieved report for post", pk.toBase58(), ":", like.target.index);
         hw1.likePost(pk, like.target.index);
       });
+
+    socket.on('set-username', username => {
+        hw1.setUsername(username);
+    })
   })
 
     console.log('Success');
