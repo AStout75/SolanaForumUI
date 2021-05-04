@@ -20,7 +20,7 @@ class PostPetition extends React.Component {
     render() {
         var voteSquares = [];
         for (var i = 0; i < this.props.petition.signatures.length; i++) {
-            voteSquares.push(<div key={i} className="petition-vote-filled"></div>);
+            voteSquares.push(<div key={i} className={"petition-vote-filled " + (this.props.petition.signatures[i].vote ? "petition-vote-for" : "petition-vote-against")}></div>);
         }
         for (var i = 0; i < this.props.petition.signatureCapacity - this.props.petition.signatures.length; i++) {
             voteSquares.push(<div key={i + this.props.petition.signatures.length} className="petition-vote-empty"></div>);

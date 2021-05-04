@@ -89,6 +89,7 @@ export function getPetitionsForPost(accounts, pubkey, index) {
     for(let i = 0; i < accounts.length; i++) {
         if (accounts[i].data.type == 'petition') {
             if (accounts[i].data.offendingPost.index == index && accounts[i].data.offendingPost.offender == pubkey) {
+                console.log(accounts[i].data.signatures);
                 res.push({
                     pubkey: accounts[i].pubkey,
                     reputationRequirement: accounts[i].data.reputationRequirement,
