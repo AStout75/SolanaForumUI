@@ -120,6 +120,9 @@ function readPostBody(d, index, length) {
 function readUsername(d) {
   let returned = "";
   for(let i = 0; i < 32; i++) {
+    if(d.readUInt8(i + 4) == 0) {
+      break;
+    }
     returned += String.fromCharCode(d.readUInt8(i + 4));
   }
   return returned;
