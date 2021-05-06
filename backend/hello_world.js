@@ -365,8 +365,8 @@ async function getNewPayer() {
 /**
  * Say hello
  */
- async function sayHello(body) {
-  console.log('Posting on account', greetedAccount.publicKey.toBase58());
+ async function sayHello(userAccount, body) {
+  console.log('Posting on account', userAccount.publicKey.toBase58());
 
   /*
   rl.on("close", function() {
@@ -379,14 +379,14 @@ async function getNewPayer() {
   console.log("Length of post:", post.length);
   console.log(post.toString("hex"));
   const instruction = new web3.TransactionInstruction({
-    keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
+    keys: [{pubkey: userAccount.publicKey, isSigner: true, isWritable: true}],
     programId,
     data: post,
   });
   await web3.sendAndConfirmTransaction(
     connection,
     new web3.Transaction().add(instruction),
-    [payerAccount, greetedAccount],
+    [payerAccount, userAccount],
     {
       commitment: 'singleGossip',
       preflightCommitment: 'singleGossip',
@@ -397,7 +397,7 @@ async function getNewPayer() {
 /*
 Reply to a pre existing post
 */
-async function replyToPost(body, targetPubkey, targetIndex) {
+async function replyToPost(userAccount, body, targetPubkey, targetIndex) {
   let post = Buffer.alloc(1 + 32 + 2 + body.length);
   console.log("Buffer is:", post.toString("hex"));
   post.writeUInt8(82, 0);
@@ -412,14 +412,14 @@ async function replyToPost(body, targetPubkey, targetIndex) {
   console.log("Length of post:", post.length);
   console.log("Sent reply with buffer:", post.toString("hex"));
   const instruction = new web3.TransactionInstruction({
-    keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
+    keys: [{pubkey: userAccount.publicKey, isSigner: true, isWritable: true}],
     programId,
     data: post,
   });
   await web3.sendAndConfirmTransaction(
     connection,
     new web3.Transaction().add(instruction),
-    [payerAccount, greetedAccount],
+    [payerAccount, userAccount],
     {
       commitment: 'singleGossip',
       preflightCommitment: 'singleGossip',
@@ -433,7 +433,7 @@ Bundle the transaction data
 */
 async function createPetitionForPost(targetPubkey, targetIndex) {
   const petitionAccount = new web3.Account();
-  const accountSize = 122;
+  const accountSize = 155;
 
   console.log("Creating new account");
     //petitionAccount = new web3.Account();
@@ -494,7 +494,7 @@ Vote on a previously existing petition
 0 for keep
 1 for remove
 */
-async function voteOnPetition(petitionPubkey, vote) {
+async function voteOnPetition(userAccount, petitionPubkey, vote) {
   let meta = Buffer.alloc(1 + 1);
   meta.writeUInt8("V".charCodeAt(0), 0);
   meta.writeUInt8(vote, 1);
@@ -502,12 +502,9 @@ async function voteOnPetition(petitionPubkey, vote) {
 
   //console.log("Length of petition:", meta.length);
   //console.log("Sent PETITION create with buffer:", meta.toString("hex"));
-  console.log("the gold standard\n\n\n", petitionPubkey);
-  console.log({pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true},
-    {pubkey: petitionPubkey, isSigner: false, isWritable: true});
   const instruction = new web3.TransactionInstruction({
     keys: [
-      {pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true},
+      {pubkey: userAccount.publicKey, isSigner: true, isWritable: true},
       {pubkey: petitionPubkey, isSigner: false, isWritable: true}
     ],
     programId,
@@ -517,7 +514,7 @@ async function voteOnPetition(petitionPubkey, vote) {
   await web3.sendAndConfirmTransaction(
     connection,
     new web3.Transaction().add(instruction),
-    [payerAccount, greetedAccount],
+    [payerAccount, userAccount],
     {
       commitment: 'singleGossip',
       preflightCommitment: 'singleGossip',
@@ -563,6 +560,42 @@ async function setNewAccount() {
 
   return greetedAccount.publicKey;
 }
+
+/*
+Create a new account on the cjain and return it
+*/
+async function makeNewAccount() {
+  console.log("Creating new account");
+  let returned = new web3.Account();
+  // Create the greeted account
+  console.log('Creating account', returned.publicKey.toBase58(), 'to say hello to');
+  //petitionAccount
+  const space = greetedAccountDataLayout.span;
+  const lamports = await connection.getMinimumBalanceForRentExemption(
+    greetedAccountDataLayout.span,
+  );
+  const transaction = new web3.Transaction().add(
+    web3.SystemProgram.createAccount({
+      fromPubkey: payerAccount.publicKey,
+      newAccountPubkey: returned.publicKey,
+      lamports: lamports,
+      space: space,
+      programId: programId,
+    }),
+  );
+  await web3.sendAndConfirmTransaction(
+    connection,
+    transaction,
+    [payerAccount, returned],
+    {
+      commitment: 'singleGossip',
+      preflightCommitment: 'singleGossip',
+    },
+  );
+
+  return returned;
+}
+
 
 
 /*
@@ -636,7 +669,7 @@ async function finalizePetitionOutcomeShowcase(petitionPubkey, offenderPubkey, s
 /*
 Reports a post with a given reason
 */
-async function reportPost(body, targetPubkey, targetIndex) {
+async function reportPost(userAccount, body, targetPubkey, targetIndex) {
   let post = Buffer.alloc(1 + 32 + 2 + body.length);
   post.writeUInt8("X".charCodeAt(0), 0);
   for(let i = 0; i < 32; i++) {
@@ -649,14 +682,14 @@ async function reportPost(body, targetPubkey, targetIndex) {
   console.log("Length of post:", post.length);
   console.log("Sent reply with buffer:", post.toString("hex"));
   const instruction = new web3.TransactionInstruction({
-    keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
+    keys: [{pubkey: userAccount.publicKey, isSigner: true, isWritable: true}],
     programId,
     data: post,
   });
   await web3.sendAndConfirmTransaction(
     connection,
     new web3.Transaction().add(instruction),
-    [payerAccount, greetedAccount],
+    [payerAccount, userAccount],
     {
       commitment: 'singleGossip',
       preflightCommitment: 'singleGossip',
@@ -668,7 +701,7 @@ async function reportPost(body, targetPubkey, targetIndex) {
 /*
 Code to send a like to a previously genereated post
 */
-async function likePost(targetPubkey, targetIndex) {
+async function likePost(userAccount, targetPubkey, targetIndex) {
   let post = Buffer.alloc(1 + 32 + 2);
   post.writeUInt8("L".charCodeAt(0), 0);
   for(let i = 0; i < 32; i++) {
@@ -679,14 +712,14 @@ async function likePost(targetPubkey, targetIndex) {
   console.log("Length of post:", post.length);
   console.log("Sent like with buffer:", post.toString("hex"));
   const instruction = new web3.TransactionInstruction({
-    keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
+    keys: [{pubkey: userAccount.publicKey, isSigner: true, isWritable: true}],
     programId,
     data: post,
   });
   await web3.sendAndConfirmTransaction(
     connection,
     new web3.Transaction().add(instruction),
-    [payerAccount, greetedAccount],
+    [payerAccount, userAccount],
     {
       commitment: 'singleGossip',
       preflightCommitment: 'singleGossip',
@@ -698,7 +731,7 @@ async function likePost(targetPubkey, targetIndex) {
 /*
 Set the user's display name
 */
-async function setUsername(username) {
+async function setUsername(userAccount, username) {
   let instructionData = Buffer.alloc(1 + username.length);
   instructionData.writeUInt8("s".charCodeAt(0), 0);
   for(let i = 0; i < username.length; i++) {
@@ -707,14 +740,14 @@ async function setUsername(username) {
   console.log("Changing username with buffer:");
   console.log(instructionData.toString("hex"));
   const instruction = new web3.TransactionInstruction({
-    keys: [{pubkey: greetedAccount.publicKey, isSigner: true, isWritable: true}],
+    keys: [{pubkey: userAccount.publicKey, isSigner: true, isWritable: true}],
     programId,
     data: instructionData,
   });
   await web3.sendAndConfirmTransaction(
     connection,
     new web3.Transaction().add(instruction),
-    [payerAccount, greetedAccount],
+    [payerAccount, userAccount],
     {
       commitment: 'singleGossip',
       preflightCommitment: 'singleGossip',
@@ -850,3 +883,4 @@ exports.setNewAccount = setNewAccount;
 exports.getNewPayer = getNewPayer;
 exports.finalizePetitionOutcomeShowcase = finalizePetitionOutcomeShowcase;
 exports.setUsername = setUsername;
+exports.makeNewAccount = makeNewAccount;

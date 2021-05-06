@@ -43,12 +43,25 @@ const { sleep } = require('./util/sleep');
     // Load the program if not already loaded
     await hw1.loadProgram();
 
+    // Create a bunch of accounts
+    let accountList = [];
+    let newAccountIndex = 0;
+    /*for(let i = 0; i < 200; i++) {
+      accountList = await hw1.makeNewAccount();
+      if(i % 10 == 0) {
+        await hw1.getNewPayer();
+      }
+    }*/
+
     let accountsBundle = await hw1.bundleAllPosts();
     console.log("Response from Solana validator:");
     for(let i = 0; i < accountsBundle.length; i++) {
       console.log(accountsBundle[i]);
     }
-    io.on('connection', socket => {
+    
+    io.on('connection', async(socket) => {
+      const userAccount = await hw1.makeNewAccount();
+      console.log(userAccount.publicKey);
       console.log('user connected');
       
       socket.on('request-posts', () => {
@@ -57,12 +70,12 @@ const { sleep } = require('./util/sleep');
       });
 
       socket.on('new-post', body => {
-          hw1.sayHello(body, "post");
+          hw1.sayHello(userAccount, body, "post");
       });
 
       socket.on('reply-post', reply => {
           let pk = new PublicKey(reply.target.pubkey);
-          hw1.replyToPost(reply.body, pk, reply.target.index);
+          hw1.replyToPost(userAccount, reply.body, pk, reply.target.index);
           console.log("body:", reply.body);
           console.log("pubkey:", pk.toBuffer().toString("hex"));
           console.log("index:", reply.target.index);
@@ -91,19 +104,20 @@ const { sleep } = require('./util/sleep');
           hw1.finalizePetitionOutcome(pk, pk2, petition.signatures);
         }
         else {
-          hw1.voteOnPetition(pk, vote); //test vote yes for now
+          hw1.voteOnPetition(userAccount, pk, vote); //test vote yes for now
         }
     });
 
       socket.on('like-post', like => {
         let pk = new PublicKey(like.target.pubkey);
         console.log("Recieved report for post", pk.toBase58(), ":", like.target.index);
-        hw1.likePost(pk, like.target.index);
+        hw1.likePost(userAccount, pk, like.target.index);
       });
 
     socket.on('set-username', username => {
-        hw1.setUsername(username);
+        hw1.setUsername(userAccount, username);
     })
+
   })
 
     console.log('Success');
